@@ -23,7 +23,7 @@
 </div>
 
 
-<script src="../docs/_vendor/jquery/dist/jquery.min.js"></script>
-<script src="../docs/_vendor/popper.js/dist/umd/popper.min.js"></script>
-<script src="../docs/_vendor/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="../docs/_assets/js/custom.js"></script>
+<!--<script src="../docs/_vendor/jquery/dist/jquery.min.js"></script>-->
+<script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./assets/js/custom.js"></script>
