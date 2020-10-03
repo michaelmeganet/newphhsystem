@@ -14,8 +14,8 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle='dropdown' href="#" id="download">Administration<span class="caret"></span></a>
                     <div class="dropdown-menu" aria-labelledby="admin">
-                        <a class="dropdown-item" href="#">Staff Menu</a>
-                        <a class="dropdown-item" href="#">Machine Menu</a>
+                        <a class="dropdown-item" href="index-administration.php?dataType=staff">Staff Menu</a>
+                        <a class="dropdown-item" href="index-administration.php?dataType=machine">Machine Menu</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Generate QR Codes</a>
                     </div>
