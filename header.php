@@ -4,14 +4,14 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="Firefox" />
-    <link rel="stylesheet" href="../docs/4/darkly/bootstrap.css" media="screen">
-    <link rel="stylesheet" href="../docs/_assets/css/custom.min.css">
+    <link rel="stylesheet" href="./docs/4/darkly/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="./docs/_assets/css/custom.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="phhlogo.ico">
     <script src="./assets/jquery-2.1.1.min.js"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
-    <script src="../node_modules/axios/dist/axios.min.js"></script>
+    <script src="./node_modules/axios/dist/axios.min.js"></script>
 
-    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="./node_modules/vue/dist/vue.js"></script>
 
     <!--
     <script src="../bower_components/vue/dist/vue.js"></script>

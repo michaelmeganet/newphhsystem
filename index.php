@@ -376,7 +376,7 @@ if (isset($post_cid)) {
                                                                     }
                                                                     ;
                                                                     var inVueData = {
-                                                                        phpajaxresponsefile: './quotation.vueaxs.php',
+                                                                        phpajaxresponsefile: './quotation.axios.php',
                                                                         showCustomer: false,
                                                                         period: '',
                                                                         post_cid: '',
