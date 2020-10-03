@@ -8,7 +8,6 @@ $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
 $action = $received_data->action;
 
-
 function getQRData($dataType) {
     switch ($dataType) {
         case 'machine':
@@ -58,6 +57,99 @@ switch ($action) {
         #echo "dataType = $dataType<br>";
         $objGenQR = new QRCode_Generate($dataType, $data_array, $dataKey);
         $result = $objGenQR->generateQRCode();
+        break;
+    case 'processData':
+        $dataType = $received_data->dataType;
+        if ($dataType == 'Staff'){//create array for staff
+            $data_array = array(
+                'staffid' => $received_data->staffid,
+                'name' => $received_data->name,
+                'division' => $received_data->division,
+                'qrcode' => $received_data->qrcode,
+                'status' => $received_data->status,
+                'staff_level' => $received_data->staff_level
+            );
+            $id = $received_data->sfid;
+            $table = 'admin_staff';
+            $tableKey = 'sfid';
+        }elseif($dataType == 'Machine'){
+            $data_array = array(
+                'machineid' => $received_data->machineid,
+                'name' => $received_data->name,
+                'model' => $received_data->model,
+                'machine_no' => $received_data->machine_no,
+                'index_per_hour' => $received_data->index_per_hour,
+                'max_table_load_kg' => $received_data->max_table_load_kg,
+                'qrcode' => $received_data->qrcode
+            );
+            $id = $received_data->mcid;
+            $table = 'machine';
+            $tableKey = 'mcid';
+        }       
+        
+        $mdlType = $received_data->mdlType;
+        switch($mdlType){
+            case 'edit': //this is update data
+                $arrCount = count($data_array);
+                $cnt = 0;
+                $qr = "UPDATE $table SET ";
+                foreach($data_array as $key => $val){
+                    $cnt++;
+                    $qr .= " $key =:$key";
+                    if ($cnt != $arrCount){
+                        $qr.= " , ";
+                    }
+                           
+                }
+                $qr .= " WHERE $tableKey = $id";
+                #echo "qr = $qr\n";
+                $objSQLU = new SQLBINDPARAM($qr,$data_array);
+                $result = $objSQLU->UpdateData2();
+                if ($result == 'Update ok!'){
+                    echo "Successfully Updated $table\n"
+                    . "($tableKey = $id)";
+                }else{
+                    echo "Failed to update.\n"
+                    . "Please Contact Administrator";
+                }
+                break;
+            case 'create': //this is create data
+                $arrCount = count($data_array);
+                $cnt = 0;
+                $qr = "INSERT INTO $table SET ";
+                foreach($data_array as $key => $val){
+                    $cnt++;
+                    $qr .= " $key =:$key";
+                    if ($cnt != $arrCount){
+                        $qr.= " , ";
+                    }
+                           
+                }
+                #echo "qr = $qr\n";
+                $objSQLU = new SQLBINDPARAM($qr,$data_array);
+                $result = $objSQLU->InsertData2();
+                if ($result == 'insert ok!'){
+                    echo "Successfully Inserted new Data into : $table\n";
+                }else{
+                    echo "Failed to insert.\n"
+                    . "Please Contact Administrator";
+                }
+                break;
+            case 'delete':
+                $qr = "DELETE FROM $table WHERE $tableKey = $id";
+                $objSQLD = new SQL($qr);
+                $result = $objSQLD->getDelete();
+                if ($result == 'deleted'){
+                    echo "Successfully Deleted data from $table !\n"
+                            . "$tableKey = $id";
+                }else{
+                    echo "Failed to delete data.\n"
+                    . "Please Contact Administrator";
+                }
+                break;
+        }
+        
+        #var_dump($received_data);
         break;
 }
 /* 
