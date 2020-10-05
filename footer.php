@@ -1,6 +1,6 @@
 
 <footer id="footer">
-    <div class='container fixed-bottom'>
+    <div class='container fixed-bottom footer' style='margin-top:10px'>
         <div class="row  bg-primary">
             <div class="col-md-12">
 

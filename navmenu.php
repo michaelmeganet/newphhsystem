@@ -8,7 +8,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav">
                 <li class="nav-item" active>
-                    <a class="nav-link" href="#">Home</a>
+                    <a class="nav-link" href="index.php">Home</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle='dropdown' href="#" id="download">Administration<span class="caret"></span></a>
@@ -19,6 +19,14 @@
                                 <li><a class="dropdown-item" href="index-administration.php?dataType=staff">Staff Menu</a></li>
                                 <li><a class="dropdown-item" href="index-administration.php?dataType=machine">Machine Menu</a></li>
 
+                            </ul>
+                        </li>
+                        <li><div class='dropdown-divider'></div></li>
+                        <li class='dropdown-submenu'>
+                            <a class='dropdown-item dropdown-toggle' href='#'>KPI Menu <span class="caret"></span></a>
+                            <ul class='dropdown-menu submenu'>
+                                <li><a class='dropdown-item' href='index-kpi.php?view=sop'>Job Scheduling and Output Details </a>
+                                <li><a class='dropdown-item' href=''></a>
                             </ul>
                         </li>
                     </ul>
