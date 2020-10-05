@@ -1,4 +1,4 @@
-<div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+<div class="navbar navbar-expand-md fixed-top navbar-dark bg-primary">
     <div class="container">
         <!-- <a href="../test.html" class="navbar-brand">Bootswatch</a> -->
         <img src="phhlogo2.png" alt="logo"> 
@@ -7,18 +7,21 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav">
-
                 <li class="nav-item" active>
                     <a class="nav-link" href="#">Home</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle='dropdown' href="#" id="download">Administration<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="admin">
-                        <a class="dropdown-item" href="#">Staff Menu</a>
-                        <a class="dropdown-item" href="#">Machine Menu</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Generate QR Codes</a>
-                    </div>
+                    <ul class="dropdown-menu" aria-labelledby="admin">
+                        <li class='dropdown-submenu'>
+                            <a class='dropdown-item dropdown-toggle' href='#'>QR Code List <span class='caret'></span></a>
+                            <ul class='dropdown-menu submenu'>
+                                <li><a class="dropdown-item" href="index-administration.php?dataType=staff">Staff Menu</a></li>
+                                <li><a class="dropdown-item" href="index-administration.php?dataType=machine">Machine Menu</a></li>
+
+                            </ul>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="download">Quotation Menu <span class="caret"></span></a>
