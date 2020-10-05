@@ -239,8 +239,8 @@ and open the template in the editor.
                 </div>
             </section>
 
-            <?php include"footer.php" ?> 
         </div>
+        <?php include"footer.php" ?> 
         <script>
 
             var adminVue = new Vue({
@@ -315,18 +315,18 @@ and open the template in the editor.
                             console.log('on processData');
                             console.log(response.data);
                             window.alert(response.data);
-                        }).then(function(){
+                        }).then(function () {
                             adminVue.getListByDataType();
                         });
                     },
-                    deleteData: function(){
-                        if (this.dataType === 'Machine'){
+                    deleteData: function () {
+                        if (this.dataType === 'Machine') {
                             id = "Machine ID = " + this.mdl_machineid;
-                        }else if (this.dataType === 'Staff'){
+                        } else if (this.dataType === 'Staff') {
                             id = "Staff ID = " + this.mdl_staffid;
                         }
-                        var resp = window.confirm("Are you sure you want to delete this data?\n"+id);
-                        if (resp){
+                        var resp = window.confirm("Are you sure you want to delete this data?\n" + id);
+                        if (resp) {
                             this.processData('delete');
                         }
                     },
