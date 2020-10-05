@@ -49,7 +49,7 @@ and open the template in the editor.
                                 $staffid = $rowVal;
                             }
                             if ($rowKey == 'qrcode') {
-                                echo "<td style='text-align:center;padding:5px 5px 5px 5px'><img src='".dirname((__DIR__))."/".$rowVal."' width='85' height='85' /></td>";
+                                echo "<td style='text-align:center;padding:5px 5px 5px 5px'><img src='".(__DIR__)."/".$rowVal."' width='85' height='85' /></td>";
                             } else {
                                 echo "<td>$rowVal</td>";
                             }

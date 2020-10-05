@@ -36,7 +36,8 @@ class QRCode_Generate {
             #echo "currr = $curr\n";
             $outputData = file_get_contents($curr);
             $outputURL = $imageContentURL . "qr_" . $data_row[$dataKey] . ".png";
-            file_put_contents('../'.$outputURL, $outputData);
+            #echo "outputURL = $outputURL\n";
+            file_put_contents(''.$outputURL, $outputData);
             $this->insertImage($data_row[$dataKey], $outputURL );
             $cnt++;
         }

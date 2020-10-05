@@ -35,7 +35,7 @@ switch ($action) {
         $result = $objSQL->getResultRowArray();
         if (!empty($result)) {
             foreach ($result as $key => $data_row) {
-                $result[$key]['qrcode'] = "<img src='" . $data_row['qrcode'] . "' width='85' height='85' />";
+                $result[$key]['qrcode'] = "<img src='admin/" . $data_row['qrcode'] . "' width='85' height='85' />";
             }
             echo json_encode($result);
         } else {
