@@ -23,9 +23,6 @@ and open the template in the editor.
                 padding: 8px;
             }
 
-            tr:nth-child(even) {
-                background-color: #dddddd;
-            }
         </style>
     </head>
     <body>
@@ -136,7 +133,7 @@ and open the template in the editor.
                                     $filteredDetails = get_filteredDetails($kpidetailstable, $date, $summType, $staffid, $mcid);
                                     if ($filteredDetails != 'empty') {
                                         //begin calculate kpi (based on staffid and mcid
-                                        $index_gain_sum = 0;
+                                        $calculatedKPI = 0;
                                         $cnt = 0;
                                         foreach ($filteredDetails as $data_row) {
                                             $cnt++;
@@ -152,13 +149,20 @@ and open the template in the editor.
                                             //fetch current KPI
                                             $kpiVal = get_kpiTimeTableDetails($start_time);
                                             #echo "kpiVal = $kpiVal<br>";
-                                            $index_gain_sum = $index_gain_sum + ($index_gain_in_kg * $kpiVal);
-                                            $det_kpi_row_details[] = $data_row;
-                                        }
-                                        if ($index_per_shift) {
-                                            $calculatedKPI = $index_gain_sum / $index_per_shift;
-                                        } else {
-                                            $calculatedKPI = 0;
+                                            $single_KPI = ($index_gain_in_kg * $kpiVal);
+                                            if ($index_per_shift) {
+                                                $inv_KPI = $single_KPI / $index_per_shift;
+                                            } else {
+                                                $inv_KPI = 0;
+                                            }
+                                            $calculatedKPI += round($inv_KPI, 7);
+                                            //slide in the individual value into data_row;
+                                            $offset = 12;
+                                            $new_datarow = array_slice($data_row, 0, $offset, true) +
+                                                    array('individual_kpi' => number_format(round($inv_KPI, 7), 7)) +
+                                                    array_slice($data_row, $offset, NULL, true);
+                                            #$data_row['individual_kpi'] = $inv_KPI;
+                                            $det_kpi_row_details[] = $new_datarow;
                                         }
                                         //create array of the current sum
                                         #echo "Generating staffid = $staffid, machine id = $machineid<br>Found $cnt Data<br> <strong>Total KPI is $calculatedKPI.</strong><br>";
@@ -168,6 +172,7 @@ and open the template in the editor.
                                             'machineid' => $machineid,
                                             'machinename' => $machine_name,
                                             'machinemodel' => $machine_model,
+                                            'index_per_shift' => $index_per_shift,
                                             'totalkpi' => $calculatedKPI,
                                             'details' => $det_kpi_row_details
                                         );
@@ -194,64 +199,116 @@ and open the template in the editor.
                     #. "Data List :";
                     #print_r($det_KPI);
                     #echo "</pre>";
-                    foreach ($det_KPI as $date => $kpi_row) {
-                        echo "<h3>$date</h3><br>";
-                        foreach ($kpi_row as $key => $data) {
-                            ?>
-                            <table style="width:auto">
+                    if (!empty($det_KPI)) {
+                        foreach ($det_KPI as $date => $kpi_row) {
+                            echo "<h3>$date</h3><br>";
+                            foreach ($kpi_row as $key => $data) {
+                                ?>
+                                <table style="width:auto">
+                                    <tr>
+                                        <th><?php echo "(" . $data['staffid'] . ") " . $data['staffname']; ?></th>
+                                        <th><?php echo "" . $data['machinename'] . " - " . $data['machinemodel']; ?></th>
+                                        <th>&nbsp;</th>
+                                        <th><?php echo "Index Capacity Per Shift : " . $data['index_per_shift']; ?> </th>
+                                    </tr>
+                                </table>
                                 <tr>
-                                    <th><?php echo "(" . $data['staffid'] . ") " . $data['staffname']; ?></td>
-                                    <th><?php echo "" . $data['machinename'] . " - " . $data['machinemodel']; ?></td>
-                                </tr>
-                            </table>
-                            <tr>
-                                <td colspan="10">
-                                    <?php
-                                    #echo "<h4>" . $data['staffid'] . " >> " . $data['staffname'] . " >> " . $data['machinename'] . " >> " . $data['machinemodel'] . " </h4><br>";
-                                    $details = $data['details'];
-                                    ?>
-                                    <table>
-                                        <thead>
-                                            <?php
-                                            foreach ($details as $data_row) {
-                                                echo "<tr>";
-                                                #print_r();
-                                                foreach ($data_row as $key => $row) {
-                                                    echo "<th>$key</th>";
-                                                }
-                                                echo "</tr>";
-                                                break;
-                                            }
-                                            ?>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            foreach ($details as $data_row) {
-                                                echo "<tr>";
-                                                #print_r();
-                                                foreach ($data_row as $key => $val) {
-                                                    echo "<td>$val</td>";
-                                                }
-                                                echo "</tr>";
-                                            }
-                                            ?>
-
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            <table style="width:auto">
-                                <tr>
-                                    <td colspan="2" style="width:auto">
+                                    <td colspan="10">
                                         <?php
-                                        echo "<b>Total KPI = " . round($data['totalkpi'], 3) . "</b><br>";
+                                        #echo "<h4>" . $data['staffid'] . " >> " . $data['staffname'] . " >> " . $data['machinename'] . " >> " . $data['machinemodel'] . " </h4><br>";
+                                        $details = $data['details'];
                                         ?>
+                                        <table>
+                                            <thead>
+                                                <?php
+                                                foreach ($details as $data_row) {
+                                                    echo "<tr>";
+                                                    #print_r();
+                                                    foreach ($data_row as $key => $row) {
+                                                        echo "<th>$key</th>";
+                                                    }
+                                                    echo "</tr>";
+                                                    break;
+                                                }
+                                                ?>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                $sum_manual_invkpi = 0;
+                                                $sum_totalweight = 0;
+                                                $sum_invkpi = 0;
+                                                foreach ($details as $data_row) {
+                                                    echo "<tr>";
+                                                    #print_r();
+                                                    foreach ($data_row as $key => $val) {
+                                                        echo "<td>$val</td>";
+                                                    }
+                                                    echo "</tr>";
+                                                    $unit_weight = $data_row['unit_weight'];
+                                                    $qty = $data_row['jobdonequantity'];
+                                                    $totalweight = $qty * $unit_weight;
+                                                    #$totalweight = $data_row['total_weight'];
+                                                    $start_time = $data_row['start_time'];
+                                                    $manual_kpiVal = get_kpiTimeTableDetails($start_time);
+                                                    if ($data['index_per_shift'] != 0){
+                                                        $manual_invkpi = round(($totalweight / $data['index_per_shift'] * $manual_kpiVal),7);
+                                                    }else{
+                                                        $manual_invkpi = 0;
+                                                    }
+                                                    $sum_manual_invkpi += $manual_invkpi;
+                                                    $sum_totalweight += floatval($data_row['total_weight']);
+                                                    $sum_invkpi += floatval($data_row['individual_kpi']);
+                                                }
+                                                ?>
+                                                <tr>
+                                                    <td colspan="11" style="text-align:right"><b>Sum of Total Weight :</b></td>
+                                                    <td><b><?php echo $sum_totalweight; ?></b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="12" style="text-align:right"><b>Sum of Individual KPI :</b></td>
+                                                    <td><b><?php echo number_format(round($sum_invkpi, 7), 7); ?></b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </td>
                                 </tr>
-                            </table>
-                            <hr><br>
-                            <?php
+                                <table style="width:auto">
+                                    <tr>
+                                        <td colspan="2" style="width:auto;background-color:white">
+                                            <?php
+                                            echo "<b>Total KPI = " . number_format(round($data['totalkpi'], 7), 7) . "</b><br>";
+                                            ?>
+                                        </td>
+                                        <td colspan="2" style="width:auto;background-color:white">
+                                            &nbsp;
+                                        </td>
+                                        <td colspan="2" style="width:auto;background-color:white">
+                                            <?php
+                                            echo "<b>".number_format(round($sum_manual_invkpi,7),7)."</b>";
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="width:auto;background-color:white">
+                                            <?php
+                                            echo "<b>Result by Program Calculation</b><br>";
+                                            ?>
+                                        </td>
+                                        <td colspan="2" style="width:auto;background-color:white">
+                                            &nbsp;
+                                        </td>
+                                        <td colspan="2" style="width:auto;background-color:white">
+                                            <b>Result by Manual Calculation</b><br>
+                                            Sum of Total Weight / Index Capacity Per Shift * KPI Value per Shift
+                                        </td>
+                                    </tr>
+                                </table>
+                                <hr><br>
+                                <?php
+                            }
                         }
+                    } else {
+                        echo "Cannot find data for $day-$month-$year";
                     }
                     ?>
 
@@ -364,7 +421,7 @@ and open the template in the editor.
 var sumKPIVue = new Vue({
     el: '#mainArea',
     data: {
-        phpajaxresponsefile: 'kpidetails.axios.php',
+        phpajaxresponsefile: './kpi-index/kpidetails.axios.php',
         period: '',
         summType: '',
         day: '',

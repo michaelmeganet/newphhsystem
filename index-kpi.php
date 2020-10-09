@@ -10,6 +10,22 @@ switch ($view) {
         $title = "KPI Menu - Job Scheduling and Output";
         $url = "./kpi-index/schedule_output.php";
         break;
+    case 'mss'://Simplified Monthly Summary
+        $title = "KPI Menu - Monthly Summary (Simple)";
+        $url = "./kpi-index/summary-kpi-simple.php";
+        break;
+    case 'ssd'://Detailed Summary by Staff
+        $title = "KPI Menu - Detail Summary by Staff";
+        $url = "./kpi-index/summary-kpi.php";
+        break;
+    case 'msd'://Detailed Summary by Machine
+        $title = "KPI Menu - Detail Summary by Machine";
+        $url = "./kpi-index/summary-kpi-machine.php";
+        break;
+    case 'usd'://Detailed Estimated Summary by Unfinished jobs
+        $title = "KPI Menu - Detail Estimated Summary by Unfinished Jobs";
+        $url = "./kpi-index/summary-kpi-unfin.php";
+        break;
 }
 ?>
 

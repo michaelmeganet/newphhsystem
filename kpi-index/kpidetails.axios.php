@@ -1,10 +1,10 @@
 <?php
 
-include_once 'class/dbh.inc.php';
-include_once 'class/variables.inc.php';
-include_once 'class/abstract_workpcsnew.inc.php';
-include_once 'class/reverse-dimension.inc.php';
-include_once 'class/phhdate.inc.php';
+include_once '../class/dbh.inc.php';
+include_once '../class/variables.inc.php';
+include_once '../class/abstract_workpcsnew.inc.php';
+include_once '../class/reverse-dimension.inc.php';
+include_once '../class/phhdate.inc.php';
 
 $received_data = json_decode(file_get_contents("php://input"));
 $data_output = array();
