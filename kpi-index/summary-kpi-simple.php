@@ -38,7 +38,14 @@ and open the template in the editor.
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                 </div>
             </div>
-            <div v-else-if='!loading'>
+            <div v-else-if='!loading && detKPI != ""'>
+
+                <div style='text-align:center'>
+                    <b style='font-size:2em'>KPI MONTHLY SUMMARY BY STAFF NAME, MACHINE</b><br>
+                    <b style='font-size:1.5em'>JOBS = {{toUpperCase(jobstatus)}} &nbsp;&nbsp;&nbsp;&nbsp;PERIOD = {{year}}-{{month}}</b><br>
+                </div>
+                <br>
+                <br>
                 <div v-if="jobstatus === 'finished' && detKPI != '' && status == 'ok'">
                     <div v-for="data in detKPI">
                         <table class="table table-bordered">
@@ -117,16 +124,15 @@ var sumKPIVue = new Vue({
         day: '',
         loading: false,
         jobstatus: 'finished',
-        
 
         periodList: '',
         dayList: '',
         kpiList: '',
         detKPI: '',
-        
+
         status: '',
         errmsg: ''
-        },
+    },
     computed: {
         year: function () {
             if (this.period !== '') {
@@ -145,16 +151,19 @@ var sumKPIVue = new Vue({
                 this.getDayList();
             }
         },
-        detKPI: function(){
-            if (this.detKPI.status == 'error'){
+        detKPI: function () {
+            if (this.detKPI.status == 'error') {
                 this.status = 'error';
                 this.errmsg = this.detKPI.msg;
-            }else{
+            } else {
                 this.status = 'ok';
             }
         }
     },
     methods: {
+        toUpperCase: function (str) {
+            return str.toUpperCase();
+        },
         getPeriod: function () {
             axios.post(this.phpajaxresponsefile, {
                 action: 'getPeriod'
