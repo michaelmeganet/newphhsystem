@@ -1,9 +1,8 @@
 
-<footer id="footer">
-    <div class='container fixed-bottom footer' style='margin-top:10px'>
-        <div class="row  bg-primary">
-            <div class="col-md-12">
-
+<div class="container bg-primary">
+    <footer id="footer" class="bg-primary mt-2 mb-0 pt-2 ">
+        <div class="row">
+            <div class="col-lg-12">
                 <ul class="list-unstyled">
                     <li class="float-lg-right"><a href="#top">Back to top</a></li>
 
@@ -17,12 +16,9 @@
 
             </div>
         </div>
-    </div>
 
-</footer>
-
-
-
+    </footer>
+</div>
 
 <script src="./docs/_vendor/jquery/dist/jquery.min.js"></script>
 <script src="./docs/_vendor/popper.js/dist/umd/popper.min.js"></script>

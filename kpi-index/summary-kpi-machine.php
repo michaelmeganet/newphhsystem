@@ -335,7 +335,7 @@ var sumKPIVue = new Vue({
             for (i = 0; i < data.length; i++) {
                 details = data[i].details;
                 for (j = 0; j < details.length; j++) {
-                    sum += parseFloat(details[j].sum_inv_kpi);
+                    sum += parseFloat(details[j].individual_kpi);
                 }
             }
             return(sum);
