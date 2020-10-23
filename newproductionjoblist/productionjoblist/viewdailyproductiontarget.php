@@ -1,18 +1,21 @@
 <?php
-include_once("include/mysql_connect.php");
+#include_once("include/mysql_connect.php");
+include_once("includes/dbh.inc.php");
+include_once("includes/variables.inc.php");
 //require_once("include/session.php");
 //include_once("include/admin_check.php");
 
-session_start();
+#session_start();
 
 //cProductionJoblist('viewdailyproductiontarget');
 
 $aid = 19;
-	  
-$sqladmin = "SELECT * FROM admin WHERE aid = $aid";
-$resultadmin = $rundb->Query($sqladmin);
-$rowadmin = $rundb->FetchArray($resultadmin);
 
+$sqladmin = "SELECT * FROM admin WHERE aid = $aid";
+$objSqladmin = new SQL($sqli);
+$rowadmin = $objSqladmin->getResultOneRowArray();
+#$resultadmin = $rundb->Query($sqladmin);
+#$rowadmin = $rundb->FetchArray($resultadmin);
 $branch = $rowadmin['branch'];
 
 $jobtype = $_GET['jt'];

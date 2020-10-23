@@ -4,7 +4,7 @@ include_once("include/mysql_connect.php");
 //include_once("include/admin_check.php");
 include_once("includes/input_modechange.php");
 
-session_start();
+#session_start();
 
 //cProductionJoblist('cncmachiningstart');
 

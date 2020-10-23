@@ -22,7 +22,7 @@ include_once ("includes/variables.inc.php");
         <td id="tdtitle">Logistic Delivery</td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=pkg" class="noline">Packing/Complete Item</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=pkg" class="noline">Packing/Complete Item(On-Progress)</a></td>
     </tr>   
     <!--
     <tr>
@@ -33,10 +33,10 @@ include_once ("includes/variables.inc.php");
     </tr>
     -->
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=sbj" class="noline">Search By Job No</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=sbj" class="noline">Search By Job No(On-Progress)</a></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=sbr" class="noline">Search By Running No</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=sbr" class="noline">Search By Running No(On-Progress)</a></td>
     </tr>
     <tr>
         <td id="tdsubtitle">&nbsp;</td>
@@ -60,19 +60,19 @@ include_once ("includes/variables.inc.php");
         <td id="tdsubtitle"><hr></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=jte&page=scan" class="noline">Joblist End</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=jte&page=scan" class="noline">Joblist End(On-Progress)</a></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=cfq" class="noline">Change Finishing Quantity</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=cfq" class="noline">Change Finishing Quantity(On-Progress)</a></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=pbj" class="noline">Search By Joblist No</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=pbj" class="noline">Search By Joblist No(On-Progress)</a></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=pbr" class="noline">Search By Running No</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=pbr" class="noline">Search By Running No(On-Progress)</a></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=psr" class="noline">Print Sticker</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=psr" class="noline">Print Sticker (On-Progress)</a></td>
     </tr>
     <tr>
         <td id="tdtitle">SCAN BARCODE</td>

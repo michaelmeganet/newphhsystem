@@ -33,7 +33,7 @@ function get_MachineByID($machineid) {
 }
 
 function parseJobcode($jobcode) {
-    $jc_length = strlen($jobcode);
+    $jclength = strlen($jobcode);
     #echo "jc_length = $jc_length.\n";
     #echo "strpos [ = " . strpos($jobcode, '[') . '\n';
     if (strpos($jobcode, '[') === 0) {

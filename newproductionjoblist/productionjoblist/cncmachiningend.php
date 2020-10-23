@@ -1,10 +1,12 @@
 <?php
-include_once("include/mysql_connect.php");
+#include_once("include/mysql_connect.php");
+include_once("includes/dbh.inc.php");
+include_once("includes/variables.inc.php");
 //require_once("include/session.php");
 //include_once("include/admin_check.php");
 include_once("includes/input_modechange.php");
 
-session_start();
+#session_start();
 
 //cProductionJoblist('cncmachiningend');
 
