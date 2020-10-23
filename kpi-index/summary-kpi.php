@@ -54,8 +54,9 @@ and open the template in the editor.
                         <div style='text-align:center'>
                             <b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>
                             <b style='font-size:1.5em'>DATE = <span v-if='summType == "daily"'>{{day}}-</span>{{month}}-{{year}}</b><br>
+                            <b style='font-size:1.5em'><button type='button' @click='changeShift()'>Current Shift : {{shift}}</button></b><br>
                         </DIV>
-                        <div v-for='(data,date) in detKPI'>
+                        <div v-for='(data,date) in detKPI[shift]'>
                             {{date}}
                             <template v-for='datarow in data'>
                                 <table class="table table-bordered">
@@ -245,6 +246,7 @@ var sumKPIVue = new Vue({
         loading: false,
         status: '',
         errmsg: '',
+        shift: 'shift1',
 
         periodList: '',
         dayList: '',
@@ -279,6 +281,13 @@ var sumKPIVue = new Vue({
         }
     },
     methods: {
+        changeShift: function (){
+            if (this.shift === 'shift1'){
+                this.shift = 'shift2';
+            }else{
+                this.shift = 'shift1';
+            }
+        },
         toUpperCase: function (str) {
             return str.toUpperCase();
         },
