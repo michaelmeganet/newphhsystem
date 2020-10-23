@@ -1,7 +1,6 @@
 <?php
 
 namespace Dimension\MaterialPrice;
-include_once 'class/density.inc.php';
 
 use SQL;
 use PDO;
