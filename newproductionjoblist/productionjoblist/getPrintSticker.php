@@ -30,7 +30,9 @@ if($_GET['ye'] && $_GET['mo'] && $_GET['da'] && $_GET['bid']) {
   // echo "\$bid =  $bid <br>";
   $dat = $year."-".sprintf("%02d", $month)."-".sprintf("%02d", $day);  
   $datdat = sprintf("%02d", substr($year, 2, 2)).sprintf("%02d", $month);
-  
+  if (!isset($com)){
+      $com = '';
+  }
   $protab = "production_scheduling".$com."_".$datdat; 
   
   if($month == 12){

@@ -33,7 +33,7 @@ function get_MachineByID($machineid) {
 }
 
 function parseJobcode($jobcode) {
-    $jc_length = strlen($jobcode);
+    $jclength = strlen($jobcode);
     #echo "jc_length = $jc_length.\n";
     #echo "strpos [ = " . strpos($jobcode, '[') . '\n';
     if (strpos($jobcode, '[') === 0) {
@@ -197,8 +197,10 @@ switch ($action) {
         $staffid = $received_data->staffid;         //staffid
         $jobdoneqty = ($received_data->quantity) ? $received_data->quantity : null;
         $machineid = ($received_data->machineid) ? $received_data->machineid : null;     //machineid
-        $machineDtl = get_MachineByID($machineid);
-        $mcid = $machineDtl['mcid'];
+        if ($machineid != null) {
+            $machineDtl = get_MachineByID($machineid);
+            $mcid = $machineDtl['mcid'];
+        }
         //parse jobcode
         try {
             $parseJobCode = parseJobcode($jobcode);

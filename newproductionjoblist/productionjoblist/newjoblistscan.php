@@ -1,10 +1,11 @@
 <?php
-include_once("include/mysql_connect.php");
+#include_once("include/mysql_connect.php");
+include_once("includes/dbh.inc.php");
+include_once("includes/variables.inc.php");
 //require_once("include/session.php");
 include_once("include/admin_check.php");
 include_once("includes/input_modechange.php");
-session_start();
-
+#session_start();
 //cProductionJoblist('bandsawcutstart');
 if (isset($_GET['jlstaffid'])) {
     $jlstaffid = $_GET['jlstaffid'];
@@ -15,8 +16,10 @@ if (isset($_GET['jljobcode'])) {
 $aid = 19;
 
 $sqladmin = "SELECT * FROM admin WHERE aid = $aid";
-$resultadmin = $rundb->Query($sqladmin);
-$rowadmin = $rundb->FetchArray($resultadmin);
+$objSqladmin = new SQL($sqladmin);
+$rowadmin = $objSqladmin->getResultOneRowArray();
+#$resultadmin = $rundb->Query($sqladmin);
+#$rowadmin = $rundb->FetchArray($resultadmin);
 
 $branch = $rowadmin['branch'];
 ?>
@@ -77,16 +80,23 @@ $branch = $rowadmin['branch'];
         </tr>
         <tr><!--Breadcrumbs Area-->
             <td>
-                <ul style='list-style: none;display: inline'>
-                    <li style='display: inline'>Test</li>
-                    <li style='display: inline' >Test</li>
+                Progress : <br>
+                <ul style='list-style: none;display: inline' >
+                    <li style='display: inline' v-for='data in jobworkDetail'>
+                        <font style='font-weight:bolder;color:Yellow;' v-if='data.process.toLowerCase() == proc'>
+                            {{data.process}}
+                        </font>
+                        <font style='color:lightblue;' v-else>
+                            {{data.process}}
+                        </font>
+                        >
+                    </li>
                 </ul>
             </td>
         </tr>
         <tr><!--Scan Area -->
             <td>
                 <div v-show="proc_status == 'start'">
-                    this is {{proc}} start process 
                     <table border="0">
                         <tr>
                             <td>Machine ID</td>
@@ -120,15 +130,13 @@ $branch = $rowadmin['branch'];
                     </table>
                 </div>
                 <div v-show="proc_status == 'end'">
-                    this is {{proc}} end process<br><br>
                     <font style='color:#1067c7'>Elapsed Time since Job Started : {{elapsedTime}}</font><br><br>
                     <table border="0">
                         <tr>
                             <td>Please scan the jobcode once more, to end this job.</td>
-                            <td>: <input type="text" v-model='quantity' name="quantity" id="quantity" maxlength="5" style="width:200px"
-                                         v-on:keyup.enter=''/>
+                            <td>: <input type="text" v-model='jobcode_end' name="jobcode_end" id="jobcode_end" style="width:200px"
+                                         v-on:keyup.enter='parseJobCodeEnd()'/>
                             </td>
-                            <td><font style='color:red'>{{quantity_response}}</font></td>
                         </tr>
                         <tr>
                             <td colspan="3" v-html="scan_response">{{scan_response}}</td>
@@ -136,7 +144,7 @@ $branch = $rowadmin['branch'];
                     </table>
                 </div>
                 <div v-show="proc_status == '' && proc == 'All Finished'">
-                    Jobcode {{jobcode}} has already done process<br>
+                    Jobcode {{parseJobCode}} has already done process<br>
                     Contact Administrator if this is an error.
                 </div>
                 <div v-show='proc_status == "" && proc == ""'>
@@ -172,6 +180,7 @@ $branch = $rowadmin['branch'];
             staff_response: '',
             staff_response_stats: '',
             jobcode: '',
+            jobcode_end: '',
             parsedJobCode: '',
             jobcode_response: '',
             jobcode_response_stats: '',
@@ -362,7 +371,6 @@ $branch = $rowadmin['branch'];
                 this.proc_status = '';
                 return;
             },
-
             getStaffName: function () {
                 axios.post(this.phpajaxresponsefile, {
                     action: 'getStaffName',
@@ -398,6 +406,26 @@ $branch = $rowadmin['branch'];
                     } else {
                         scanVue.parsedJobCode = response.data.msg;
                         scanVue.jobcode_response = '<font style="color:yellow">' + response.data.msg + "</font>";
+                    }
+                })
+            },
+            parseJobCodeEnd: function () {
+                axios.post(this.phpajaxresponsefile, {
+                    action: 'parseJobCode',
+                    jobcode: scanVue.jobcode_end
+                }).then(function (response) {
+                    console.log('on parseJobCodeEnd');
+                    console.log(response.data);
+                    //scanVue.jobcode_response_stats = response.data.status;
+                    if (response.data.status === 'error') {
+                        scanVue.scan_response = '<font style="color:red">' + response.data.msg + "</font>";
+                    } else {
+                        if (scanVue.parsedJobCode == response.data.msg) {
+                            scanVue.getJobUpdate();
+                        } else {
+                            scanVue.scan_response = '<font style="color:red">Scanned Job : ' + response.data.msg + " is not the same.</font>";
+
+                        }
 
                     }
                 })
@@ -424,6 +452,7 @@ $branch = $rowadmin['branch'];
                 });
             },
             clearData: function () {
+                this.jobcode_end = '';
                 this.jobcode_response = '';
                 this.jobcode_response_stats = '';
                 this.jobworkDetail = '';
