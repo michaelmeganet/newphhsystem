@@ -91,20 +91,22 @@ and open the template in the editor.
                                             <td colspan="11" style="text-align:right"><b>Sum of Total Weight :</b></td>
                                             <td><b>{{sum_total_weight(datarow.details)}}</b></td>
                                         </tr>
+                                        <!--
                                         <tr>
                                             <td colspan="12" style="text-align:right"><b>Sum of Individual KPI :</b></td>
                                             <td><b>{{sum_inv_kpi(datarow.details)}}</b></td>
                                         </tr>
+                                        -->
                                     </tbody>
                                 </table>
                                 <table style="width:auto">
                                     <tr>
                                         <td colspan="2" style="width:auto;"><b>
-                                                Total Value Gain (RM) : {{toFixed(datarow.totalkpi,7)}}
+                                                Total Value Gain (RM) : {{toFixed(datarow.totalkpi,2)}}
                                             </b>
                                         </td>
                                         <td colspan="2" style="width:auto;">
-                                            &nbsp;
+                                            RM Rate = {{toFixed(datarow.rm_rate,2)}}
                                         </td>
                                     </tr>
                                     <tr>

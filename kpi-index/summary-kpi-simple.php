@@ -124,6 +124,7 @@ var sumKPIVue = new Vue({
         day: '',
         loading: false,
         jobstatus: 'finished',
+        shift : 'shift1',
 
         periodList: '',
         dayList: '',
@@ -161,6 +162,13 @@ var sumKPIVue = new Vue({
         }
     },
     methods: {
+        changeShift: function () {
+            if (this.shift === 'shift1') {
+                this.shift = 'shift2';
+            } else {
+                this.shift = 'shift1';
+            }
+        },
         toUpperCase: function (str) {
             return str.toUpperCase();
         },
