@@ -157,10 +157,16 @@
         function get_weightDetails($period, $nextPeriod, $date) {
             $prowtab = "production_weight_" . $period;
             $prow2tab = "production_weight_" . $nextPeriod;
+
+            // This is old version, parse data by dateofcompletion.
             $qr = "(SELECT * FROM $prowtab WHERE DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m')) ";
             if (check_table($prow2tab)) {
                 $qr .= "UNION (SELECT * FROM $prow2tab WHERE DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m'))";
             }
+
+            //
+            //new version, now fetches all data
+            //$qr = "SELECT * FROM $prowtab";
             $objSQL = new SQL($qr);
             $result = $objSQL->getResultRowArray();
             if (!empty($result)) {
@@ -491,14 +497,14 @@ var kpiDetailsVue = new Vue({
                 <th>end time</th><th>duration</th><th>model</th>
             </tr>
             <tr>
-                <td><?php #echo "$kpidid";             ?></td><td><?php #echo "$sid";             ?></td><td><?php #echo "$jobcode";             ?></td>
-                <td><?php #echo "$jobtype";             ?></td><td><?php #echo "$grade";             ?></td><td><?php #echo "$totalquantity";             ?></td>
-                <td><?php #echo "$remainingquantity";             ?></td><td><?php #echo "$jobdonequantity";             ?></td>
-                <td><?php #echo "$unit_weight";             ?></td><td><?php #echo "$total_weight";             ?></td><td><?php #echo "$dimensions";             ?></td>
-                <td><?php #echo "$jlfor";             ?></td><td><?php #echo "$index_gain_in_kg";             ?></td><td><?php #echo "$jobno";             ?></td>
-                <td><?php #echo "$dateofcompletion";             ?></td><td><?php #echo "$cid";             ?></td><td> <?php #echo $poid;             ?></td>
-                <td><?php #echo $cuttingtype;             ?></td><td><?php #echo $staffname;             ?></td><td><?php #echo $machineModel;             ?></td>
-                <td><?php #echo $start_time;             ?></td><td><?php #echo $end_time;             ?></td><td><?php #echo $duration;             ?></td><td><?php #echo $model;             ?></td>
+                <td><?php #echo "$kpidid";              ?></td><td><?php #echo "$sid";              ?></td><td><?php #echo "$jobcode";              ?></td>
+                <td><?php #echo "$jobtype";              ?></td><td><?php #echo "$grade";              ?></td><td><?php #echo "$totalquantity";              ?></td>
+                <td><?php #echo "$remainingquantity";              ?></td><td><?php #echo "$jobdonequantity";              ?></td>
+                <td><?php #echo "$unit_weight";              ?></td><td><?php #echo "$total_weight";              ?></td><td><?php #echo "$dimensions";              ?></td>
+                <td><?php #echo "$jlfor";              ?></td><td><?php #echo "$index_gain_in_kg";              ?></td><td><?php #echo "$jobno";              ?></td>
+                <td><?php #echo "$dateofcompletion";              ?></td><td><?php #echo "$cid";              ?></td><td> <?php #echo $poid;              ?></td>
+                <td><?php #echo $cuttingtype;              ?></td><td><?php #echo $staffname;              ?></td><td><?php #echo $machineModel;              ?></td>
+                <td><?php #echo $start_time;              ?></td><td><?php #echo $end_time;              ?></td><td><?php #echo $duration;              ?></td><td><?php #echo $model;              ?></td>
     
             </tr>
         </table>

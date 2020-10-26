@@ -320,7 +320,55 @@ function get_distinctStaff($table, $date, $summType, $shift) {
     }
 }
 
+function get_intervalDateArray($date_start, $date_end, $index, $indexLimit) {
+    #$index = 1;
+    $dateLimit = 10;
+    $beginAdd = ((int) $index * (int) $dateLimit);
+    $beginAdd = $beginAdd . ' days';
+    $endAdd = ((int) $beginAdd + (int) $dateLimit);
+    $endAdd = $endAdd . ' days';
+    #echo "endAdd = $endAdd\n";
+    if ($index == $indexLimit) {
+        $begin = new DateTime($date_start);
+        date_add($begin, date_interval_create_from_date_string($beginAdd));
+        $end = new DateTime($date_end);
+        date_add($end, date_interval_create_from_date_string('1 days'));
+    } else {
+        $begin = new DateTime($date_start);
+        date_add($begin, date_interval_create_from_date_string($beginAdd));
+        $end = new DateTime($date_start);
+        date_add($end, date_interval_create_from_date_string($endAdd));
+    }
+
+    $interval = DateInterval::createFromDateString('1 day');
+    $period = new DatePeriod($begin, $interval, $end);
+    $date_array = array();
+    foreach ($period as $dt) {
+        #echo $dt->format("Y-m-d\n");
+        $date_array[] = $dt->format("Y-m-d");
+    }
+    return $date_array;
+}
+
 switch ($action) {
+    case 'getYear':
+        $objDate = new GenerateDateArray();
+        $year = $objDate->generateYearArray();
+        echo json_encode($year);
+        break;
+    case 'getMonth':
+        $year = $received_data->year;
+        $objDate = new GenerateDateArray();
+        $month = $objDate->generateMonthArray($year);
+        echo json_encode($month);
+        break;
+    case 'getDay' :
+        $year = $received_data->year;
+        $month = $received_data->month;
+        $objDate = new GenerateDateArray();
+        $day = $objDate->generateDayArray($year, $month);
+        echo json_encode($day);
+        break;
     case 'getPeriod':
         $objDate = new DateNow();
         $currentPeriod_int = $objDate->intPeriod();
@@ -439,7 +487,7 @@ switch ($action) {
                             } else {
                                 $total_kpi_overtime = 0;
                             }
-                            
+
                             if ($total_kpi_normal < 0) {
                                 $total_kpi = round($total_kpi_overtime, 2);
                             } elseif ($total_kpi_overtime < 0) {
@@ -462,8 +510,8 @@ switch ($action) {
                             'machinemodel' => $machine_model,
                             'weight_gain' => number_format(round($output_weight_sum, 2), 2),
                             'machine_index_per_shift' => $machine_capacity_per_shift,
-                            'value_gain_normal' => number_format(round($total_kpi_normal,2),2),
-                            'value_gain_overtime' => number_format(round($total_kpi_overtime,2),2),
+                            'value_gain_normal' => number_format(round($total_kpi_normal, 2), 2),
+                            'value_gain_overtime' => number_format(round($total_kpi_overtime, 2), 2),
                             'total_value_gain(RM)' => number_format(round($total_kpi, 2), 2),
                             'data_found' => $cnt
                         );
@@ -570,40 +618,50 @@ switch ($action) {
 
         break;
     case 'getDetailedKPIStaff':
-        $period = $received_data->period;
-        $summType = $received_data->summType;
-        $i_day = $received_data->day;
+        #print_r($received_data);
+        $date_start = $received_data->date_start;
+        $date_end = $received_data->date_end;
+        $index = (int) $received_data->index;
+        $indexLimit = (int) $received_data->indexLimit;
+        $date_array = get_intervalDateArray($date_start, $date_end, $index, $indexLimit);
+        #print_r($date_array);
+        #$period = $received_data->period;
+        #$summType = $received_data->summType;
+        #$date_array = $received_data->date_array;
         #$period = $_POST['period'];
         #$summType = $_POST['summType'];
         #$i_day = $_POST['day'];
-        $kpidetailstable = 'kpidetails_' . $period;
-        $year = '20' . substr($period, 0, 2);
-        $month = substr($period, 2, 2);
-        if ($summType == 'all') {
-            $i_day = 1;
-            $day = sprintf('%02d', $i_day);
-            $date = $year . '-' . $month . '-' . $day;
-            $totaldate = date_format(date_create($date), 't');
-        } else {
-            $day = sprintf('%02d', $i_day);
-            $date = $year . '-' . $month . '-' . $day;
-            $totaldate = $i_day;
-        }
-        $day = sprintf('%02d', $i_day);
+        #$kpidetailstable = 'kpidetails_' . $period;
+        #$year = '20' . substr($period, 0, 2);
+        #$month = substr($period, 2, 2);
+        #if ($summType == 'all') {
+        #    $i_day = 1;
+        #    $day = sprintf('%02d', $i_day);
+        #    $date = $year . '-' . $month . '-' . $day;
+        #    $totaldate = date_format(date_create($date), 't');
+        #} else {
+        #    $day = sprintf('%02d', $i_day);
+        #    $date = $year . '-' . $month . '-' . $day;
+        #    $totaldate = $i_day;
+        #}
+        #$day = sprintf('%02d', $i_day);
         #echo "selected day = $day<br>";
         #echo "Total date in this month = $totaldate";
         #echo "<div style='text-align:center'>";
-        if ($summType == 'daily') {
-            #echo "<b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>";
-            #echo "<h2>DATE = $day-$month-$year</h2><br>";
-        } else {
-            #echo "<b style='font-size:2em'>KPI INDEX MONTHLY DETAILS REPORT</b><br>";
-            #echo "<h2>DATE = $month-$year</h2><br>";
-        }
+        #if ($summType == 'daily') {
+        #echo "<b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>";
+        #echo "<h2>DATE = $day-$month-$year</h2><br>";
+        #} else {
+        #echo "<b style='font-size:2em'>KPI INDEX MONTHLY DETAILS REPORT</b><br>";
+        #echo "<h2>DATE = $month-$year</h2><br>";
+        #}
         #echo "</div>";
-        for ($i = $i_day; $i <= $totaldate; $i++) {
-            $day = sprintf('%02d', $i);
-            $date = $year . '-' . $month . '-' . $day;
+        #for ($i = $i_day; $i <= $totaldate; $i++) {
+        foreach ($date_array as $date) {
+            $period = substr($date, 2, 2) . substr($date, 5, 2);
+            $kpidetailstable = 'kpidetails_' . $period;
+            #$day = sprintf('%02d', $i);
+            #$date = $year . '-' . $month . '-' . $day;
             #echo "<h3>Processing Date '$date'</h3><br>";
             for ($shift = 1; $shift <= 2; $shift++) {
                 #echo $shift;
@@ -710,7 +768,7 @@ switch ($action) {
                                     'machineid' => $machineid,
                                     'machinename' => $machine_name,
                                     'machinemodel' => $machine_model,
-                                    'index_per_shift' => $index_per_shift,
+                                    '$machine_capacity_per_shift' => $machine_capacity_per_shift,
                                     'totalkpi' => $total_kpi,
                                     'rm_rate' => $RMRate,
                                     'details' => $det_kpi_row_details
@@ -730,7 +788,7 @@ switch ($action) {
                     }
                 }
                 if (isset($det_kpi_row)) {
-                    $det_KPI['shift' . $shift][$date] = $det_kpi_row;
+                    $det_KPI[$date]['shift' . $shift] = $det_kpi_row;
                     unset($det_kpi_row);
                 }
             }
@@ -851,7 +909,7 @@ switch ($action) {
                     } else {
                         $total_kpi_overtime = 0;
                     }
-                    
+
                     if ($total_kpi_normal < 0) {
                         $total_kpi = round($total_kpi_overtime, 2);
                     } elseif ($total_kpi_overtime < 0) {

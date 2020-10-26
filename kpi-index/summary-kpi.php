@@ -14,30 +14,69 @@ and open the template in the editor.
     <body>
         <div id='mainArea'>
             <form action='' method='POST'>
-                <div> <!--period area-->
-                    Period :
-                    <select v-model='period' id='period' name='period' @change="summType=''">
-                        <option v-for='data in periodList' v-bind:value='data'>{{data}}</option>
-                    </select>
-                </div>
-                <div v-if='period!= ""'><!--summary monthly/daily area-->
-                    Summary Type :
-                    <select v-model='summType' id='summType' name='summType' @change='day = ""'>
-                        <option value='all'>Monthly</option>
-                        <option value='daily'>Daily</option>
-                    </select>
-                </div>
-                <div v-if='summType == "daily"'><!-- date selection -->
-                    Date :
-                    <select v-model="day" id="day" name="day">
-                        <option v-for="data in dayList" v-bind:value="data">{{data}}</option>
-                    </select>
-                    <button type="button" @click="getDetailedKPIStaff" >Submit</button>
-                </div>
-                <div v-else-if='summType != "daily" && summType!=""'>
-                    Date :
-                    <input type='text' id='day' name='day' value='Show All' readonly/>
-                    <button type="button" @click="getDetailedKPIStaff" >Submit</button>
+                <div class="container">
+                    <div class='row'>
+                        <div class='col-md-4'>
+                            <div class='row'>
+                                <div class='col-md'>
+                                    Start Date:
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-4'>
+                                    Year:<br>
+                                    <select v-model='yearStart' id='yearStart' name='yearStart' @change="getMonth(yearStart,'start')">
+                                        <option v-for="data in yearSList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4'>
+                                    Month:<br>
+                                    <select v-model='monthStart' id='monthStart' name='monthStart' @change="getDay(yearStart,monthStart,'start')">
+                                        <option v-for="data in monthSList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4'>
+                                    Day:<br>
+                                    <select v-model='dayStart' id='dayStart' name='dayStart' @change="">
+                                        <option v-for="data in daySList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                &nbsp;
+                            </div>
+                            <div class='row'>
+                                <div class='col-md'>
+                                    End Date:
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-4'>
+                                    Year:<br>
+                                    <select v-model='yearEnd' id='yearEnd' name='yearEnd' @change="getMonth(yearEnd,'end')">
+                                        <option v-for="data in yearEList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4'>
+                                    Month:<br>
+                                    <select v-model='monthEnd' id='monthEnd' name='monthEnd' @change="getDay(yearEnd,monthEnd,'end')">
+                                        <option v-for="data in monthEList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4'>
+                                    Day:<br>
+                                    <select v-model='dayEnd' id='dayEnd' name='dayEnd' @change="parseDateInterval()">
+                                        <option v-for="data in dayEList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='row'>
+                        <div class='col-md-4'>
+                            <button class='btn btn-primary btn-block' type='button' @click='currIndex = 0;getDetailedKPIStaff()'>Submit</button>
+                        </div>
+                    </div>
                 </div>
             </form>
             <br>
@@ -54,74 +93,81 @@ and open the template in the editor.
                         <div style='text-align:center'>
                             <b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>
                             <b style='font-size:1.5em'>DATE = <span v-if='summType == "daily"'>{{day}}-</span>{{month}}-{{year}}</b><br>
-                            <b style='font-size:1.5em'><button type='button' @click='changeShift()'>Current Shift : {{shift}}</button></b><br>
                         </DIV>
-                        <div v-for='(data,date) in detKPI[shift]'>
-                            {{date}}
-                            <template v-for='datarow in data'>
-                                <table class="table table-bordered">
-                                    <thead>
+                        <div>
+                            Page {{currIndex+1}} of {{indexLimit+1}}
+                        </div>
+                        <div v-for='(shiftdata,date) in detKPI'>
+                            <template v-for='(data,shift) in shiftdata'>
+                                <font style='font-size:1.2em;text-align:center;background-color:#406094'>Datalist of {{date}} - {{shift}}</font><br>
+                                <template v-for='datarow in data'>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style='width:25%'>({{datarow.staffid}}) - {{datarow.staffname}}</th>
+                                                <th>({{datarow.machinename}}) - {{datarow.machinemodel}}</th>
+                                                <th>&nbsp;</th> 
+                                                <th style='width:25%'>Index Capacity Per Shift : {{datarow.index_per_shift}}</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                    <table class='table table-bordered table-responsive'>
+                                        <thead>
+                                            <tr>
+                                                <th v-for='(data,index) in datarow.details[0]'>
+                                                    {{index}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for='details in datarow.details'>
+                                                <th v-for='(data, index) in details' >
+                                                    {{data}}
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="10" style="text-align:right"><b>Sum of Unit Weight :</b></td>
+                                                <td><b>{{sum_unit_weight(datarow.details)}}</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="11" style="text-align:right"><b>Sum of Total Weight :</b></td>
+                                                <td><b>{{sum_total_weight(datarow.details)}}</b></td>
+                                            </tr>
+                                            <!--
+                                            <tr>
+                                                <td colspan="12" style="text-align:right"><b>Sum of Individual KPI :</b></td>
+                                                <td><b>{{sum_inv_kpi(datarow.details)}}</b></td>
+                                            </tr>
+                                            -->
+                                        </tbody>
+                                    </table>
+                                    <table style="width:auto">
                                         <tr>
-                                            <th style='width:25%'>({{datarow.staffid}}) - {{datarow.staffname}}</th>
-                                            <th>({{datarow.machinename}}) - {{datarow.machinemodel}}</th>
-                                            <th>&nbsp;</th> 
-                                            <th style='width:25%'>Index Capacity Per Shift : {{datarow.index_per_shift}}</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                                <table class='table table-bordered table-responsive'>
-                                    <thead>
-                                        <tr>
-                                            <th v-for='(data,index) in datarow.details[0]'>
-                                                {{index}}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for='details in datarow.details'>
-                                            <th v-for='(data, index) in details' >
-                                                {{data}}
-                                            </th>
+                                            <td colspan="2" style="width:auto;"><b>
+                                                    Total Value Gain (RM) : {{toFixed(datarow.totalkpi,2)}}
+                                                </b>
+                                            </td>
+                                            <td colspan="2" style="width:auto;">
+                                                RM Rate = {{toFixed(datarow.rm_rate,2)}}
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="10" style="text-align:right"><b>Sum of Unit Weight :</b></td>
-                                            <td><b>{{sum_unit_weight(datarow.details)}}</b></td>
+                                            <td colspan="2" style="width:auto"><b>
+                                                    Result by Program Calculation
+                                                </b>
+                                            </td>
+                                            <td colspan="2" style="width:auto;">
+                                                &nbsp;
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="11" style="text-align:right"><b>Sum of Total Weight :</b></td>
-                                            <td><b>{{sum_total_weight(datarow.details)}}</b></td>
-                                        </tr>
-                                        <!--
-                                        <tr>
-                                            <td colspan="12" style="text-align:right"><b>Sum of Individual KPI :</b></td>
-                                            <td><b>{{sum_inv_kpi(datarow.details)}}</b></td>
-                                        </tr>
-                                        -->
-                                    </tbody>
-                                </table>
-                                <table style="width:auto">
-                                    <tr>
-                                        <td colspan="2" style="width:auto;"><b>
-                                                Total Value Gain (RM) : {{toFixed(datarow.totalkpi,2)}}
-                                            </b>
-                                        </td>
-                                        <td colspan="2" style="width:auto;">
-                                            RM Rate = {{toFixed(datarow.rm_rate,2)}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="width:auto"><b>
-                                                Result by Program Calculation
-                                            </b>
-                                        </td>
-                                        <td colspan="2" style="width:auto;">
-                                            &nbsp;
-                                        </td>
-                                    </tr>
-                                </table>
+                                    </table>
+                                </template>
+                                <div>
+                                    <hr style='border-top: 1px dashed blue'>
+                                </div>
                             </template>
                             <div>
-                                <hr>
+                                <hr style='border: 1px solid blue'>
                             </div>
                         </div>
                     </div>
@@ -248,12 +294,26 @@ var sumKPIVue = new Vue({
         loading: false,
         status: '',
         errmsg: '',
-        shift: 'shift1',
+        currIndex: 0,
+        indexLimit: '',
+        yearStart: '',
+        yearEnd: '',
+        yearSList: '',
+        yearEList: '',
+        monthStart: '',
+        monthEnd: '',
+        monthSList: '',
+        monthEList: '',
+        dayStart: '',
+        dayEnd: '',
+        daySList: '',
+        dayEList: '',
 
         periodList: '',
         dayList: '',
         kpiList: '',
-        detKPI: ''
+        detKPI: '',
+
     },
     computed: {
         year: function () {
@@ -283,10 +343,10 @@ var sumKPIVue = new Vue({
         }
     },
     methods: {
-        changeShift: function (){
-            if (this.shift === 'shift1'){
+        changeShift: function () {
+            if (this.shift === 'shift1') {
                 this.shift = 'shift2';
-            }else{
+            } else {
                 this.shift = 'shift1';
             }
         },
@@ -296,13 +356,79 @@ var sumKPIVue = new Vue({
         toFixed: function (str, decimal) {
             return str.toFixed(decimal);
         },
-        getPeriod: function () {
+        parseDateInterval: function () {
+            this.indexLimit = '';
+            if ((parseInt(this.yearEnd) - parseInt(this.yearStart)) < 0) {
+                //Year is weird, start exceeds end
+                console.log('year is weird, check');
+            } else if ((parseInt(this.monthEnd) - parseInt(this.monthStart)) < 0) {
+                //month is weird, start exceeds end
+                console.log('month is weird, check');
+            } else if (((parseInt(this.dayEnd) - parseInt(this.dayStart)) < 0) && ((parseInt(this.monthEnd) - parseInt(this.monthStart)) == 0)) {
+                //day is weird, start exceeds end
+                console.log('day is weird, check');
+            } else {
+                dayLimit = 10;
+                if (this.monthEnd == this.monthStart) { //same month, just do normal math
+                    console.log('same month');
+                    dayInterval = parseInt(this.dayEnd) - parseInt(this.dayStart);
+                    if (dayInterval == 0) {
+                        console.log('no interval');
+                        this.indexLimit = 0;
+                    } else {
+                        console.log('find interval');
+                        this.indexLimit = Math.floor((dayInterval + 1) / dayLimit);
+                    }
+                } else {
+                    daysOfMonth = new Date(this.yearStart, this.monthStart, 0).getDate();
+                    sInterval = parseInt(daysOfMonth) - parseInt(this.dayStart);
+                    eInterval = parseInt(this.dayEnd);
+                    dayInterval = sInterval + eInterval;
+                    this.indexLimit = Math.floor((dayInterval + 1) / dayLimit);
+                }
+            }
+        },
+        getYear: function (status) {
             axios.post(this.phpajaxresponsefile, {
-                action: 'getPeriod'
+                action: 'getYear'
             }).then(function (response) {
-                console.log('on getPeriod....');
+                console.log('on getYear');
                 console.log(response.data);
-                sumKPIVue.periodList = response.data;
+
+                if (status == 'start') {
+                    sumKPIVue.yearSList = response.data;
+                } else if (status == 'end') {
+                    sumKPIVue.yearEList = response.data;
+                }
+            });
+        },
+        getMonth: function (year, status) {
+            axios.post(this.phpajaxresponsefile, {
+                action: 'getMonth',
+                year: year
+            }).then(function (response) {
+                console.log('on getMonth');
+                console.log(response.data);
+                if (status == 'start') {
+                    sumKPIVue.monthSList = response.data;
+                } else if (status == 'end') {
+                    sumKPIVue.monthEList = response.data;
+                }
+            });
+        },
+        getDay: function (year, month, status) {
+            axios.post(this.phpajaxresponsefile, {
+                action: 'getDay',
+                year: year,
+                month: month
+            }).then(function (response) {
+                console.log('on getDay');
+                console.log(response.data);
+                if (status == 'start') {
+                    sumKPIVue.daySList = response.data;
+                } else if (status == 'end') {
+                    sumKPIVue.dayEList = response.data;
+                }
             });
         },
         getDayList: function () {
@@ -315,13 +441,27 @@ var sumKPIVue = new Vue({
                 sumKPIVue.dayList = response.data;
             });
         },
-        getDetailedKPIStaff: function () {
+        getDetailedKPIStaff: function (index = 0) {
+            if (this.dayStart.length == 1){
+                day_start = '0' + this.dayStart;
+            }else{
+                day_start = this.dayStart;
+            }
+            if (this.dayEnd.length == 1){
+                day_end = '0' + this.dayStart;
+            }else{
+                day_end = this.dayEnd;
+            }
+            date_start = this.yearStart + '-' + this.monthStart + '-' + day_start;
+            date_end = this.yearEnd + '-' + this.monthEnd + '-' + day_end;
             this.loading = true;
             axios.post(this.phpajaxresponsefile, {
                 action: 'getDetailedKPIStaff',
-                period: sumKPIVue.period,
-                summType: sumKPIVue.summType,
-                day: sumKPIVue.day
+                //period: sumKPIVue.period,
+                date_start: date_start,
+                date_end: date_end,
+                index: index,
+                indexLimit: sumKPIVue.indexLimit
             }).then(function (response) {
                 console.log('on getDetailedKPIStaff..');
                 console.log(response.data);
@@ -354,7 +494,8 @@ var sumKPIVue = new Vue({
         }
     },
     mounted: function () {
-        this.getPeriod();
+        this.getYear('start');
+        this.getYear('end');
     }
 });
         </script>
