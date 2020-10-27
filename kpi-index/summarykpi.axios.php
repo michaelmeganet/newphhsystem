@@ -185,15 +185,17 @@ function get_filteredDetails($table, $date, $summType, $staffid, $mcid, $shift) 
     }
     if ($summType == 'daily') {
         $qr = "SELECT * FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND staffid = '$staffid' "
+                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
                 . "AND mcid = $mcid AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') "
                 . $timecheck
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'"
                 . "ORDER BY dateofcompletion, staffid, mcid ASC";
     } elseif ($summType == 'all') {
         $qr = "SELECT * FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND staffid = '$staffid' "
+                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
                 . "AND mcid = $mcid AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m') "
                 . $timecheck
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'"
                 . "ORDER BY dateofcompletion, staffid, mcid ASC";
     }
     $objSQL = new SQL($qr);
@@ -232,15 +234,17 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
         $timecheck = '';
     }
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
                 . "AND staffid = '$staffid' "
                 . "AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
-                . "$timecheck ORDER BY mcid ASC";
+                . "$timecheck "
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%' ORDER BY mcid ASC";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
                 . "AND staffid = '$staffid' "
                 . "AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m') "
-                . "$timecheck ORDER BY mcid ASC";
+                . "$timecheck "
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%' ORDER BY mcid ASC";
     }
     #echo "qr = $qr\n";
     $objSQL = new SQL($qr);
@@ -254,9 +258,11 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
 
 function get_distinctMachine_M($table, $date, $summType) {
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmach' AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') ORDER BY mcid ASC";
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') ORDER BY mcid ASC"
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmach' AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m') ORDER BY mcid ASC";
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m') ORDER BY mcid ASC"
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -269,9 +275,11 @@ function get_distinctMachine_M($table, $date, $summType) {
 
 function get_distinctStaff_M($table, $date, $summType, $mcid) {
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' AND NOT jobtype ='cncmach' AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')";
+        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' AND NOT jobtype ='cncmach' AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m')";
+        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -300,15 +308,17 @@ function get_distinctStaff($table, $date, $summType, $shift) {
     if ($summType == 'daily') {
         $qr = "SELECT DISTINCT staffid FROM $table "
                 . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
-                . "AND NOT jobtype ='cncmachining' "
+                . "AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
                 . "AND DATE_FORMAT(dateofcompletion,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
-                . "$timecheck";
+                . "$timecheck"
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
     } elseif ($summType == 'all') {
         $qr = "SELECT DISTINCT staffid FROM $table "
                 . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
-                . "AND NOT jobtype ='cncmachining' "
+                . "AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
                 . "AND DATE_FORMAT(dateofcompletion,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
-                . "$timecheck";
+                . "$timecheck"
+                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
         ;
     }
     $objSQL = new SQL($qr);
@@ -365,6 +375,7 @@ switch ($action) {
     case 'getDay' :
         $year = $received_data->year;
         $month = $received_data->month;
+        #echo "year = $year; month = $month\n";
         $objDate = new GenerateDateArray();
         $day = $objDate->generateDayArray($year, $month);
         echo json_encode($day);
@@ -618,50 +629,40 @@ switch ($action) {
 
         break;
     case 'getDetailedKPIStaff':
-        #print_r($received_data);
-        $date_start = $received_data->date_start;
-        $date_end = $received_data->date_end;
-        $index = (int) $received_data->index;
-        $indexLimit = (int) $received_data->indexLimit;
-        $date_array = get_intervalDateArray($date_start, $date_end, $index, $indexLimit);
-        #print_r($date_array);
-        #$period = $received_data->period;
-        #$summType = $received_data->summType;
-        #$date_array = $received_data->date_array;
+        $period = $received_data->period;
+        $summType = $received_data->summType;
+        $i_day = $received_data->day;
         #$period = $_POST['period'];
         #$summType = $_POST['summType'];
         #$i_day = $_POST['day'];
-        #$kpidetailstable = 'kpidetails_' . $period;
-        #$year = '20' . substr($period, 0, 2);
-        #$month = substr($period, 2, 2);
-        #if ($summType == 'all') {
-        #    $i_day = 1;
-        #    $day = sprintf('%02d', $i_day);
-        #    $date = $year . '-' . $month . '-' . $day;
-        #    $totaldate = date_format(date_create($date), 't');
-        #} else {
-        #    $day = sprintf('%02d', $i_day);
-        #    $date = $year . '-' . $month . '-' . $day;
-        #    $totaldate = $i_day;
-        #}
-        #$day = sprintf('%02d', $i_day);
+        $kpidetailstable = 'kpidetails_' . $period;
+        $year = '20' . substr($period, 0, 2);
+        $month = substr($period, 2, 2);
+        if ($summType == 'all') {
+            $i_day = 1;
+            $day = sprintf('%02d', $i_day);
+            $date = $year . '-' . $month . '-' . $day;
+            $totaldate = date_format(date_create($date), 't');
+        } else {
+            $day = sprintf('%02d', $i_day);
+            $date = $year . '-' . $month . '-' . $day;
+            $totaldate = $i_day;
+        }
+        $day = sprintf('%02d', $i_day);
         #echo "selected day = $day<br>";
         #echo "Total date in this month = $totaldate";
         #echo "<div style='text-align:center'>";
-        #if ($summType == 'daily') {
-        #echo "<b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>";
-        #echo "<h2>DATE = $day-$month-$year</h2><br>";
-        #} else {
-        #echo "<b style='font-size:2em'>KPI INDEX MONTHLY DETAILS REPORT</b><br>";
-        #echo "<h2>DATE = $month-$year</h2><br>";
-        #}
+        if ($summType == 'daily') {
+            #echo "<b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>";
+            #echo "<h2>DATE = $day-$month-$year</h2><br>";
+        } else {
+            #echo "<b style='font-size:2em'>KPI INDEX MONTHLY DETAILS REPORT</b><br>";
+            #echo "<h2>DATE = $month-$year</h2><br>";
+        }
         #echo "</div>";
-        #for ($i = $i_day; $i <= $totaldate; $i++) {
-        foreach ($date_array as $date) {
-            $period = substr($date, 2, 2) . substr($date, 5, 2);
-            $kpidetailstable = 'kpidetails_' . $period;
-            #$day = sprintf('%02d', $i);
-            #$date = $year . '-' . $month . '-' . $day;
+        for ($i = $i_day; $i <= $totaldate; $i++) {
+            $day = sprintf('%02d', $i);
+            $date = $year . '-' . $month . '-' . $day;
             #echo "<h3>Processing Date '$date'</h3><br>";
             for ($shift = 1; $shift <= 2; $shift++) {
                 #echo $shift;
@@ -740,6 +741,11 @@ switch ($action) {
                                         $total_kpi = 0;
                                     }
                                 }
+                                if ($total_kpi < 0) {
+                                    $real_total_kpi = 0;
+                                } else {
+                                    $real_total_kpi = $total_kpi;
+                                }
                                 /** old procedure
                                   //fetch current KPI
                                   //$kpiVal = get_kpiTimeTableDetails($start_time);
@@ -768,7 +774,8 @@ switch ($action) {
                                     'machineid' => $machineid,
                                     'machinename' => $machine_name,
                                     'machinemodel' => $machine_model,
-                                    '$machine_capacity_per_shift' => $machine_capacity_per_shift,
+                                    'machine_capacity_per_shift' => $machine_capacity_per_shift,
+                                    'real_total_kpi' => $real_total_kpi,
                                     'totalkpi' => $total_kpi,
                                     'rm_rate' => $RMRate,
                                     'details' => $det_kpi_row_details
@@ -797,6 +804,147 @@ switch ($action) {
             echo json_encode($det_KPI);
         } else {
             $err_arr = array('status' => 'error', 'msg' => 'Cannot find data for period = ' . $period);
+            echo json_encode($err_arr);
+        }
+        break;
+    case 'getDetailedKPIStaffInterval':
+        #print_r($received_data);
+        $date_start = $received_data->date_start;
+        $date_end = $received_data->date_end;
+        $index = (int) $received_data->index;
+        $indexLimit = (int) $received_data->indexLimit;
+        $date_array = get_intervalDateArray($date_start, $date_end, $index, $indexLimit);
+        foreach ($date_array as $date) {
+            $period = substr($date, 2, 2) . substr($date, 5, 2);
+            $kpidetailstable = 'kpidetails_' . $period;
+            #$day = sprintf('%02d', $i);
+            #$date = $year . '-' . $month . '-' . $day;
+            #echo "<h3>Processing Date '$date'</h3><br>";
+            for ($shift = 1; $shift <= 2; $shift++) {
+                #echo $shift;
+                //get RM Rate by Shift
+                $shift_stat = get_kpiTimeTableDetailsByShift($shift, $date);
+                //end RM Rate by Shift
+
+                try {
+                    $staffList = get_distinctStaff($kpidetailstable, $date, 'daily', $shift);
+                    if ($staffList == 'empty') {
+                        throw new Exception('There\'s no staff found!', 101);
+                    }
+                    #echo "<span style= 'color:white;background-color:blue'>found " . count($staffList) . " staff</span><br>";
+                    foreach ($staffList as $data_staff) {
+                        $staffid = $data_staff['staffid'];
+                        $staffDetails = get_staffDetails($staffid);
+                        if ($staffDetails != 'empty') {
+                            $staffname = $staffDetails['name'];
+                        } else {
+                            $staffname = null;
+                        }
+                        $machineList = get_distinctMachine($kpidetailstable, $date, 'daily', $staffid, $shift);
+                        #print_r($machineList);
+                        #echo "<span style= 'color:white;background-color:black'>found " . count($machineList) . " machines</span><br>";
+                        foreach ($machineList as $data_machine) {
+                            $mcid = $data_machine['mcid'];
+                            $machineid = $data_machine['machineid'];
+                            $mcDetail = get_machineDetails($mcid);
+                            if ($mcDetail != 'empty') {
+                                #echo "<pre>MachineLists : ";
+                                #print_r($mcDetail);
+                                #echo "</pre>";
+                                $machine_name = $mcDetail['name'];
+                                $machine_model = $mcDetail['model'];
+                                $machine_capacity_per_hour = $mcDetail['index_per_hour'];
+                                $machine_capacity_per_shift = $machine_capacity_per_hour * 8;
+                            } else {
+                                $machine_name = null;
+                                $machine_model = null;
+                                $machine_capacity_per_hour = null;
+                                $machine_capacity_per_shift = null;
+                            }
+                            $filteredDetails = get_filteredDetails($kpidetailstable, $date, 'daily', $staffid, $mcid, $shift);
+                            if ($filteredDetails != 'empty') {
+                                //begin calculate kpi (based on staffid and mcid
+                                $output_weight_sum = 0;
+                                $cnt = 0;
+                                foreach ($filteredDetails as $data_row) {
+                                    $cnt++;
+                                    $jd_qty = $data_row['totalquantity'];
+                                    $unit_weight = $data_row['unit_weight'];
+                                    $start_time = $data_row['start_time'];
+                                    $end_time = $data_row['end_time'];
+                                    if ($jd_qty) {
+                                        $output_weight = $jd_qty * $unit_weight;
+                                    } else {
+                                        $index_gain = 0;
+                                    }
+                                    $output_weight_sum += $output_weight;
+                                    $offset = 14;
+                                    $new_datarow = array_slice($data_row, 0, $offset, true) +
+                                            array('unit gain (kg)' => $data_row['index_gain_in_kg']) +
+                                            array_slice($data_row, $offset, NULL, true);
+                                    unset($new_datarow['index_gain_in_kg']);
+                                    $det_kpi_row_details[] = $new_datarow;
+                                }
+                                if ($shift_stat == 1) {
+                                    $RMRate = 9.8;
+                                    if ($machine_capacity_per_shift) {
+                                        $total_kpi = round((($output_weight_sum - $machine_capacity_per_shift) / $machine_capacity_per_shift) * 9.8, 2);
+                                        #echo 'rmrate ='.$RMRate;
+                                    } else {
+                                        $total_kpi = 0;
+                                    }
+                                } elseif ($shift_stat == 0) {
+                                    $RMRate = 7.35;
+                                    if ($machine_capacity_per_shift) {
+                                        $total_kpi = round(($output_weight_sum / $machine_capacity_per_shift) * 7.35, 2);
+                                        #echo 'rmrate ='.$RMRate;
+                                    } else {
+                                        $total_kpi = 0;
+                                    }
+                                }
+                                if ($total_kpi < 0) {
+                                    $real_total_kpi = 0;
+                                } else {
+                                    $real_total_kpi = $total_kpi;
+                                }
+                                //create array of the current sum
+                                #echo "Generating staffid = $staffid, machine id = $machineid<br>Found $cnt Data<br> <strong>Total KPI is $calculatedKPI.</strong><br>";
+                                $det_kpi_row[] = array(
+                                    'staffid' => $staffid,
+                                    'staffname' => $staffname,
+                                    'machineid' => $machineid,
+                                    'machinename' => $machine_name,
+                                    'machinemodel' => $machine_model,
+                                    'machine_capacity_per_shift' => $machine_capacity_per_shift,
+                                    'real_total_kpi' => $real_total_kpi,
+                                    'totalkpi' => $total_kpi,
+                                    'rm_rate' => $RMRate,
+                                    'details' => $det_kpi_row_details
+                                );
+                                unset($det_kpi_row_details);
+                            } else {
+                                
+                            }
+                        }
+                    }
+                } catch (Exception $ex) {
+                    $code = $ex->getCode();
+                    switch ($code) {
+                        case 101: //cannot find staff list
+                            #echo "Cannot find Staff for period = $period.<br>";
+                            break;
+                    }
+                }
+                if (isset($det_kpi_row)) {
+                    $det_KPI[$date]['shift' . $shift] = $det_kpi_row;
+                    unset($det_kpi_row);
+                }
+            }
+        }
+        if (!empty($det_KPI)) {
+            echo json_encode($det_KPI);
+        } else {
+            $err_arr = array('status' => 'error', 'msg' => 'Cannot find data for period = ');
             echo json_encode($err_arr);
         }
         break;

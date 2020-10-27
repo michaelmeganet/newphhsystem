@@ -727,6 +727,7 @@ Class GenerateDateArray {
             }
         } else {
             $date = date_create("$year-$month-01");
+            #echo "date = $date";
             $totalDate = date_format($date, 't');
             for ($day = 1; $day <= $totalDate; $day++) {
                 $dayArr[] = $day;
