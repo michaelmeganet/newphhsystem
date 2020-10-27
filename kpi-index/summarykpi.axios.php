@@ -476,7 +476,7 @@ switch ($action) {
                             //fetch current KPI
                             #$kpiVal = get_kpiTimeTableDetails($start_time);
                             #echo "kpiVal = $kpiVal<br>";
-                            #$index_gain_sum = $index_gain_sum + ($index_gain_in_kg * $kpiVal);
+                            #$index_gain_sum = $index_gain_sum + ($unit_gain_kg * $kpiVal);
                             $shiftVal = get_kpiTimeTableDetails($start_time);
                             #echo "rmrate = $RMRate\n";
                             $output_weight_sum += $output_weight;
@@ -583,14 +583,14 @@ switch ($action) {
                                         $rand_index_per_shift = get_randomVirtualValues($processname);
                                         $unit_weight = $data_row['unit_weight'];
                                         if ($totalquantity != 0) {
-                                            $index_gain_in_kg = $unit_weight * $totalquantity;
+                                            $unit_gain_kg = $unit_weight * $totalquantity;
                                         } else {
-                                            $index_gain_in_kg = 0;
+                                            $unit_gain_kg = 0;
                                         }
-                                        $inv_Nu_KPI = $index_gain_in_kg / $rand_index_per_shift * 9.8;
+                                        $inv_Nu_KPI = $unit_gain_kg / $rand_index_per_shift * 9.8;
                                         //slide in the individual value into data_row;
                                         $offset = 12;
-                                        $data_row['index_gain_in_kg'] = $index_gain_in_kg;
+                                        $data_row['unit_gain_kg'] = $unit_gain_kg;
                                         $new_datarow = array_slice($data_row, 0, $offset, true) +
                                                 array('individual_kpi' => number_format(round($inv_Nu_KPI, 7), 7)) +
                                                 array_slice($data_row, $offset, NULL, true);
@@ -605,7 +605,7 @@ switch ($action) {
                             $sum_index_gain = 0;
                             $sum_KPI = 0;
                             foreach ($details as $detail_row) {
-                                $sum_index_gain += $detail_row['index_gain_in_kg'];
+                                $sum_index_gain += $detail_row['unit_gain_kg'];
                                 $sum_KPI += $detail_row['individual_kpi'];
                             }
                             $det_KPI[] = array(
@@ -750,7 +750,7 @@ switch ($action) {
                                   //fetch current KPI
                                   //$kpiVal = get_kpiTimeTableDetails($start_time);
                                   #echo "kpiVal = $kpiVal<br>";
-                                  #$single_KPI = ($index_gain_in_kg * $kpiVal);
+                                  #$single_KPI = ($unit_gain_kg * $kpiVal);
                                   if ($index_per_shift) {
                                   $inv_KPI = $single_KPI / $index_per_shift;
                                   } else {
@@ -880,9 +880,9 @@ switch ($action) {
                                     $output_weight_sum += $output_weight;
                                     $offset = 14;
                                     $new_datarow = array_slice($data_row, 0, $offset, true) +
-                                            array('unit gain (kg)' => $data_row['index_gain_in_kg']) +
+                                            array('unit gain (kg)' => $data_row['unit_gain_kg']) +
                                             array_slice($data_row, $offset, NULL, true);
-                                    unset($new_datarow['index_gain_in_kg']);
+                                    unset($new_datarow['unit_gain_kg']);
                                     $det_kpi_row_details[] = $new_datarow;
                                 }
                                 if ($shift_stat == 1) {
@@ -1026,7 +1026,7 @@ switch ($action) {
                             }
                             //slide in the individual value into data_row;
                             $offset = 12;
-                            #$data_row['index_gain_in_kg'] = $index_gain_in_kg;
+                            #$data_row['unit_gain_kg'] = $unit_gain_kg;
                             $new_datarow = array_slice($data_row, 0, $offset, true) +
                                     array('normal_shift' => $shiftVal) +
                                     array_slice($data_row, $offset, NULL, true);
@@ -1164,14 +1164,14 @@ switch ($action) {
                         $rand_index_per_shift = get_randomVirtualValues($processname);
                         $unit_weight = $data_row['unit_weight'];
                         if ($totalquantity != 0) {
-                            $index_gain_in_kg = $unit_weight * $totalquantity;
+                            $unit_gain_kg = $unit_weight * $totalquantity;
                         } else {
-                            $index_gain_in_kg = 0;
+                            $unit_gain_kg = 0;
                         }
-                        $inv_Nu_KPI = $index_gain_in_kg / $rand_index_per_shift * 9.8;
+                        $inv_Nu_KPI = $unit_gain_kg / $rand_index_per_shift * 9.8;
                         //slide in the individual value into data_row;
                         $offset = 12;
-                        $data_row['index_gain_in_kg'] = $index_gain_in_kg;
+                        $data_row['unit_gain_kg'] = $unit_gain_kg;
                         $new_datarow = array_slice($data_row, 0, $offset, true) +
                                 array('estimated_individual_kpi' => number_format(round($inv_Nu_KPI, 7), 7)) +
                                 array_slice($data_row, $offset, NULL, true);

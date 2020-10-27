@@ -35,6 +35,10 @@ and open the template in the editor.
                                         <option v-for="data in daySList" v-bind:value="data">{{data}}</option>
                                     </select>
                                 </div>
+                                <div class='col-md' v-show="dayStart != '' && periodStart != ''">
+                                    Selected<br>
+                                    <font style='color:yellow'>{{dayStart}}/{{periodStart.substr(2,2)}}/20{{periodStart.substr(0,2)}}</font>
+                                </div>
                             </div>
                             <div class="row">
                                 &nbsp;
@@ -48,7 +52,7 @@ and open the template in the editor.
                                 <div class='col-md-4'>
                                     Period:<br>
                                     <select v-model='periodEnd' id ='periodEnd' name='periodEnd' @change='parsePeriod(periodEnd,"end")'>
-                                        <option v-for='data in periodList' v-bind:value='data'>{{data}}</option>
+                                        <option v-for='data in periodEList' v-bind:value='data'>{{data}}</option>
                                     </select>
                                 </div>
                                 <div class='col-md-4'>
@@ -57,10 +61,17 @@ and open the template in the editor.
                                         <option v-for="data in dayEList" v-bind:value="data">{{data}}</option>
                                     </select>
                                 </div>
+                                <div class='col-md' v-show="dayEnd != '' && periodEnd != ''">
+                                    Selected<br>
+                                    <font style='color:yellow'>{{dayEnd}}/{{periodEnd.substr(2,2)}}/20{{periodEnd.substr(0,2)}}</font>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class='row' v-show='periodEnd != "" && periodStart != "" && dayEnd != "" && dayStart != ""'>
+                    <div>
+                        <font style='color:red'>{{period_response}}</font>
+                    </div>
+                    <div class='row' v-show='allowSubmit'>
                         <div class='col-md-4'>
                             <button class='btn btn-primary btn-block' type='button' @click='currIndex = 0;getDetailedKPIStaff()'>Submit</button>
                         </div>
@@ -350,6 +361,8 @@ var sumKPIVue = new Vue({
     data: {
         phpajaxresponsefile: './kpi-index/summarykpi.axios.php',
         endShow: false,
+        allowSubmit: false,
+        period_response: '',
         periodStart: '',
         periodEnd: '',
         summType: '',
@@ -376,6 +389,16 @@ var sumKPIVue = new Vue({
 
     },
     computed: {
+        periodEList: function(){
+            if (this.periodStart != ''){
+                perStart = parseInt(this.periodStart);
+                data = {
+                    0: perStart.toString(),
+                    1: (perStart +1).toString()
+                };
+                return data;
+            }
+        }
     },
     watch: {
         summType: function () {
@@ -418,17 +441,23 @@ var sumKPIVue = new Vue({
         },
         parseDateInterval: function () {
             this.indexLimit = '';
+            this.allowSubmit = false;
             if ((parseInt(this.yearEnd) - parseInt(this.yearStart)) < 0) {
                 //Year is weird, start exceeds end
+                this.period_response = 'End Date Period is not appropriate';
                 console.log('year is weird, check');
             } else if ((parseInt(this.monthEnd) - parseInt(this.monthStart)) < 0) {
                 //month is weird, start exceeds end
+                this.period_response = 'End Date Period is not appropriate';
                 console.log('month is weird, check');
             } else if (((parseInt(this.dayEnd) - parseInt(this.dayStart)) < 0) && ((parseInt(this.monthEnd) - parseInt(this.monthStart)) == 0)) {
                 //day is weird, start exceeds end
+                this.period_response = 'End Date Day is not appropriate';
                 console.log('day is weird, check');
             } else {
                 dayLimit = 10;
+                this.allowSubmit = true;
+                this.period_response = '';
                 if (this.monthEnd == this.monthStart) { //same month, just do normal math
                     console.log('same month');
                     dayInterval = parseInt(this.dayEnd) - parseInt(this.dayStart);
