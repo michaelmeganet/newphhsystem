@@ -127,10 +127,10 @@ function get_kpiTimeTableDetails($start_time) {
     } else {
         $shift = 'shift2';
         #if ($time >= $shift2S && $time <= $shift2ME) {
-            //Shift 2 of current date
-            $date = sprintf('%04d', $dateY) . '-' . sprintf('%02d', $datem) . '-' . sprintf('%02d', $dated);
+        //Shift 2 of current date
+        $date = sprintf('%04d', $dateY) . '-' . sprintf('%02d', $datem) . '-' . sprintf('%02d', $dated);
         #} elseif ($time >= $shift2MS && $time <= $shift2E) {
-            //Shift 2 of previous date
+        //Shift 2 of previous date
         #    if ($datem == 1 && $dated == 1) {
         #        $datem = 12;
         #        $dated = 31;
@@ -467,6 +467,7 @@ switch ($action) {
                             $jd_qty = $data_row['totalquantity'];
                             $unit_weight = $data_row['unit_weight'];
                             $start_time = $data_row['start_time'];
+                            $start_date = date_format(date_create($start_time), 'Y-m-d');
                             $end_time = $data_row['end_time'];
                             if ($jd_qty) {
                                 $output_weight = $jd_qty * $unit_weight;
@@ -479,43 +480,44 @@ switch ($action) {
                             #$index_gain_sum = $index_gain_sum + ($unit_gain_kg * $kpiVal);
                             $shiftVal = get_kpiTimeTableDetails($start_time);
                             #echo "rmrate = $RMRate\n";
+                            #echo $staffid.$machineid;
                             $output_weight_sum += $output_weight;
-                            if (isset($sum_deltaOutWMachine[$shiftVal])) {
-                                $sum_deltaOutWMachine[$shiftVal] = $sum_deltaOutWMachine[$shiftVal] + $output_weight;
+                            if (isset($sum_deltaOutWMachine[$start_date][$shiftVal])) {
+                               # echo "old = ".$sum_deltaOutWMachine[$start_date][$shiftVal];
+                               # echo "added by $output_weight";
+                                $sum_deltaOutWMachine[$start_date][$shiftVal] += $output_weight;
+                               # echo "result = ".$sum_deltaOutWMachine[$start_date][$shiftVal];
                             } else {
-                                $sum_deltaOutWMachine[$shiftVal] = $output_weight;
+                                $sum_deltaOutWMachine[$start_date][$shiftVal] = $output_weight;
                             }
                         }
+                        $sum_total_kpi = 0;
+                        foreach ($sum_deltaOutWMachine as $date_detail) {
+                            #echo "test";
+                            foreach ($date_detail as $key => $val) {
+                                if ($machine_capacity_per_shift) {
+                                    if ($key == 1) {
+                                        $total_kpi = ($val - $machine_capacity_per_shift) / $machine_capacity_per_shift * 9.8;
+                                    } elseif ($key == 0) {
+                                        $total_kpi = ($val) / $machine_capacity_per_shift * 7.35;
+                                    } else {
+                                        $total_kpi = 0;
+                                    }
+                                    #$total_kpi = round(($sum_deltaOutWMachine / $machine_capacity_per_shift), 2);
+                                    #echo 'rmrate ='.$RMRate;
+                                } else {
+                                    $total_kpi = 0;
+                                }
+                                if ($total_kpi < 0){
+                                    $total_kpi = 0;
+                                }
+                                $sum_total_kpi += $total_kpi;
+                            }
+                        }
+
+                        #echo $staffid.$machineid;
                         #print_r($sum_deltaOutWMachine);
-                        if ($machine_capacity_per_shift) {
-                            if (isset($sum_deltaOutWMachine[1])) {
-                                $total_kpi_normal = (($sum_deltaOutWMachine[1] - $machine_capacity_per_shift) / $machine_capacity_per_shift) * 9.8;
-                            } else {
-                                $total_kpi_normal = 0;
-                            }
-                            if (isset($sum_deltaOutWMachine[0])) {
-                                $total_kpi_overtime = (($sum_deltaOutWMachine[0]) / $machine_capacity_per_shift) * 7.35;
-                            } else {
-                                $total_kpi_overtime = 0;
-                            }
-                            echo $staffid.$machineid;
-                            print_r($sum_deltaOutWMachine);
-                            echo"<br>";
-                            if ($total_kpi_normal < 0) {
-                                $total_kpi = round($total_kpi_overtime, 2);
-                            } elseif ($total_kpi_overtime < 0) {
-                                $total_kpi = round($total_kpi_normal, 2);
-                            } elseif ($total_kpi_normal < 0 && $total_kpi_overtime < 0) {
-                                $total_kpi = round(0, 2);
-                            } else {
-                                $total_kpi = round((float) $total_kpi_normal + (float) $total_kpi_overtime, 2);
-                            }
-                            #$total_kpi = round(($sum_deltaOutWMachine / $machine_capacity_per_shift), 2);
-                            #echo 'rmrate ='.$RMRate;
-                        } else {
-                            $total_kpi = 0;
-                        }
-                        #echo "totalkpi = $total_kpi";
+                        #echo "totalkpi = $sum_total_kpi";
                         //create array of the current sum
                         $det_kpi_row[] = array(
                             'machineid' => $machineid,
@@ -523,9 +525,9 @@ switch ($action) {
                             'machinemodel' => $machine_model,
                             'weight_gain' => number_format(round($output_weight_sum, 2), 2),
                             'machine_index_per_shift' => $machine_capacity_per_shift,
-                            'value_gain_normal' => number_format(round($total_kpi_normal, 2), 2),
-                            'value_gain_overtime' => number_format(round($total_kpi_overtime, 2), 2),
-                            'total_value_gain(RM)' => number_format(round($total_kpi, 2), 2),
+                            #'value_gain_normal' => number_format(round($total_kpi_normal, 2), 2),
+                            #'value_gain_overtime' => number_format(round($total_kpi_overtime, 2), 2),
+                            'total_value_gain(RM)' => number_format(round($sum_total_kpi, 2), 2),
                             'data_found' => $cnt
                         );
                         //push this to det_KPI array
@@ -635,13 +637,13 @@ switch ($action) {
         $staffid = $received_data->staffid;
         $machineid = $received_data->machineid;
         $staffDetails = get_staffDetails($staffid);
-                $cntDataShift = 0;
-                        $rlTkpi = 0;
-                        $weight[0] = 0;
-                        $weight[1] =0;
-        if ($staffDetails != 'empty'){
+        $cntDataShift = 0;
+        $rlTkpi = 0;
+        $weight[0] = 0;
+        $weight[1] = 0;
+        if ($staffDetails != 'empty') {
             $staffname = $staffDetails['name'];
-        }else{
+        } else {
             $staffname = null;
         }
         $qr = "SELECT * FROM machine WHERE machineid = '$machineid'";
@@ -649,12 +651,12 @@ switch ($action) {
         $result = $objSQL->getResultOneRowArray();
         if (!empty($result)) {
             $mcid = $result['mcid'];
-        }else{
+        } else {
             echo json_encode('Cannot Find Data, Machineid Invalid');
             break;
         }
-        
-        
+
+
         $kpidetailstable = "kpidetails_$period";
         $year = '20' . substr($period, 0, 2);
         $month = substr($period, 2, 2);
@@ -728,11 +730,11 @@ switch ($action) {
                         } else {
                             $real_total_kpi = $total_kpi;
                         }
-                       # echo "1";
+                        # echo "1";
                         //create array of the current sum
                         #echo "Generating staffid = $staffid, machine id = $machineid<br>Found $cnt Data<br> <strong>Total KPI is $calculatedKPI.</strong><br>";
                         $det_kpi_row[] = array(
-                            'Date' => date_format(date_create($date),'d-m-Y'),
+                            'Date' => date_format(date_create($date), 'd-m-Y'),
                             'Shift' => $shift,
                             'Total Weight (KG)' => $output_weight_sum,
                             'Rate (RM)' => $RMRate,
@@ -751,9 +753,9 @@ switch ($action) {
                 }
             }
         }
-                    echo $cntDataShift."\n";
-                    echo "totalkpi = $rlTkpi\n;";
-                    print_r($weight);
+        echo $cntDataShift . "\n";
+        echo "totalkpi = $rlTkpi\n;";
+        print_r($weight);
         echo json_encode($det_kpi_row);
         break;
     case 'getDetailedKPIStaff':
