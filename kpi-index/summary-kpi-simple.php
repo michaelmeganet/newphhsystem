@@ -39,78 +39,80 @@ and open the template in the editor.
                 </div>
             </div>
             <div v-else-if='!loading && detKPI != ""'>
+                <div class='container'>
+                    <div style='text-align:center'>
+                        <b style='font-size:2em'>KPI MONTHLY SUMMARY BY STAFF NAME, MACHINE</b><br>
+                        <b style='font-size:1.5em'>JOBS = {{toUpperCase(jobstatus)}} &nbsp;&nbsp;&nbsp;&nbsp;PERIOD = {{year}}-{{month}}</b><br>
+                    </div>
+                    <br>
+                    <br>
+                    <div v-if="jobstatus === 'finished' && detKPI != '' && status == 'ok'">
+                        <div v-for="data in detKPI">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>{{data.staffid}}</th>
+                                        <th>{{data.staffname}}</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3">
+                                            The finished job done KPI by {{data.staffname}} in the month of {{year}}-{{month}},<br>
+                                            Summarized by Machine Models below :<br>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3">
+                                            <table class="table table-bordered overflow-auto">
+                                                <thead>
+                                                    <tr>
+                                                        <th v-for="(data,index) in data.details[0]">
+                                                            {{index}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="datarow in data.details">
+                                                        <th v-for="(val,index) in datarow">
+                                                            <span v-if='index == "machinename"'><a href="#" @click="openDetailsPage(data.staffid,datarow.machineid,period)">{{val}}</a></span>
+                                                            <span v-else>{{val}}</span>
+                                                        </th>
+                                                    </tr>
+                                                </tbody>
+                                            </table >
+                                        </td>
+                                    </tr>
 
-                <div style='text-align:center'>
-                    <b style='font-size:2em'>KPI MONTHLY SUMMARY BY STAFF NAME, MACHINE</b><br>
-                    <b style='font-size:1.5em'>JOBS = {{toUpperCase(jobstatus)}} &nbsp;&nbsp;&nbsp;&nbsp;PERIOD = {{year}}-{{month}}</b><br>
-                </div>
-                <br>
-                <br>
-                <div v-if="jobstatus === 'finished' && detKPI != '' && status == 'ok'">
-                    <div v-for="data in detKPI">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>            
+                    <div v-else-if="jobstatus === 'unfinished' && detKPI != '' && status == 'ok'">
+                        <label class='control-label'>
+                            Estimated Unfinished KPI List by Virtual Machines (Based on process to choose the appropriated virtual machines)
+                        </label>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>{{data.staffid}}</th>
-                                    <th>{{data.staffname}}</th>
-                                    <th></th>
-                                </tr>
-                                <tr>
-                                    <th colspan="3">
-                                        The finished job done KPI by {{data.staffname}} in the month of {{year}}-{{month}},<br>
-                                        Summarized by Machine Models below :<br>
-                                    </th>
+                                    <td v-for='(data,index) in detKPI[0]'>
+                                        {{index}}
+                                    </td>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td colspan="3">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th v-for="(data,index) in data.details[0]">
-                                                        {{index}}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="datarow in data.details">
-                                                    <th v-for="(data,index) in datarow">
-                                                        {{data}}
-                                                    </th>
-                                                </tr>
-                                            </tbody>
-                                        </table >
+                                <tr v-for='datarow in detKPI'>
+                                    <td v-for='(data,index) in datarow'>
+                                        {{data}}
                                     </td>
                                 </tr>
-
                             </tbody>
                         </table>
                     </div>
-                </div>            
-                <div v-else-if="jobstatus === 'unfinished' && detKPI != '' && status == 'ok'">
-                    <label class='control-label'>
-                        Estimated Unfinished KPI List by Virtual Machines (Based on process to choose the appropriated virtual machines)
-                    </label>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <td v-for='(data,index) in detKPI[0]'>
-                                    {{index}}
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for='datarow in detKPI'>
-                                <td v-for='(data,index) in datarow'>
-                                    {{data}}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div v-else-if='status=="error"'>
-                    <label class="label label-danger">{{errmsg}}</label>
+                    <div v-else-if='status=="error"'>
+                        <label class="label label-danger">{{errmsg}}</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,7 +126,7 @@ var sumKPIVue = new Vue({
         day: '',
         loading: false,
         jobstatus: 'finished',
-        shift : 'shift1',
+        shift: 'shift1',
 
         periodList: '',
         dayList: '',
@@ -171,6 +173,14 @@ var sumKPIVue = new Vue({
         },
         toUpperCase: function (str) {
             return str.toUpperCase();
+        },
+        openDetailsPage: function (staffid, machineid, period) {
+            console.log('Data Clicked : ...');
+            console.log('staffid = ' + staffid);
+            console.log('machineid = ' + machineid);
+            console.log('period = ' + period);
+            url = 'kpi-index/summary-kpi-simple-details.php?period='+period+'&staffid='+staffid+'&machineid='+machineid;
+            window.open(url,'_blank');
         },
         getPeriod: function () {
             axios.post(this.phpajaxresponsefile, {
