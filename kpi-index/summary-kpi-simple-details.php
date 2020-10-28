@@ -20,7 +20,7 @@ and open the template in the editor.
                 <br>
                 <br>
                 <div>
-                    You have clicked <br>= 
+                    You have clicked: <br>
                     period = {{period}}<br>
                     staffid = {{staffid}}<br>
                     machineid = {{machineid}}<br>
@@ -42,6 +42,19 @@ var sumKPIVue = new Vue({
     watch: {
     },
     methods: {
+        summaryKPISimpleDetails: function () {
+            period = this.period;
+            staffid = this.staffid;
+            machineid = this.machineid;
+            axios.post(this.phpajaxresponsefile, {
+                action: 'summaryKPISimpleDetails',
+                period: period,
+                staffid: staffid,
+                machineid: machineid
+            }).then(function (response) {
+                console.log(response.data);
+            });
+        }
     },
     beforeMount: function () {
         params = new URLSearchParams(location.search);
@@ -53,6 +66,7 @@ var sumKPIVue = new Vue({
         console.log(this.period);
         console.log(this.staffid);
         console.log(this.machineid);
+        this.summaryKPISimpleDetails();
     }
 });
         </script>
