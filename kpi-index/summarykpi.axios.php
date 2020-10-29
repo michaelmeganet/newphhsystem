@@ -463,12 +463,18 @@ switch ($action) {
             $machinename = $result['name'];
             $machinemodel = $result['model'];
             $machineno = $result['machine_no'];
+            if ($result['index_per_hour'] != NULL || $result['index_per_hour'] != 0) {
+                $machine_capacity_per_shift = $result['index_per_hour'] * 8;
+            }else{
+                $machine_capacity_per_shift = 0;
+            }
             $resArr = array(
                 'status' => 'ok',
                 'mcid' => $mcid,
                 'machinename' => $machinename,
                 'machinemodel' => $machinemodel,
-                'machineno' => $machineno
+                'machineno' => $machineno,
+                'machine_capacity_per_shift' => $machine_capacity_per_shift
             );
         } else {
             $resArr = Array(

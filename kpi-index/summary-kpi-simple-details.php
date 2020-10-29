@@ -38,6 +38,10 @@ and open the template in the editor.
                                     <td>Machine :</td>
                                     <td>[{{machineid}}] - {{machinename}} ({{machinemodel}})</td>
                                 </tr>
+                                <tr>
+                                    <td>Machine Capacity Per Shift (Kg):</td>
+                                    <td>{{machine_capacity_per_shift}}</td>
+                                </tr>
                             </table>
                             
                         </div>
@@ -78,6 +82,7 @@ var sumKPIVue = new Vue({
         machinename: '',
         machinemodel: '',
         machineno: '',
+        machine_capacity_per_shift: '',
         dataList: '',
 
         status: '',
@@ -150,6 +155,7 @@ var sumKPIVue = new Vue({
                     sumKPIVue.machinename = response.data.machinename;
                     sumKPIVue.machinemodel = response.data.machinemodel;
                     sumKPIVue.machineno = response.data.machineno;
+                    sumKPIVue.machine_capacity_per_shift = response.data.machine_capacity_per_shift;
                 } else {
                     sumKPIVue.status = 'error';
                     sumKPIVue.errorMsg = response.data.msg;
