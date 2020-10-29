@@ -179,7 +179,7 @@ var sumKPIVue = new Vue({
             console.log('staffid = ' + staffid);
             console.log('machineid = ' + machineid);
             console.log('period = ' + period);
-            url = 'kpi-index/summary-kpi-simple-details.php?period='+period+'&staffid='+staffid+'&machineid='+machineid;
+            url = 'index-kpi.php?view=mssd&period='+period+'&staffid='+staffid+'&machineid='+machineid;
             window.open(url,'_blank');
         },
         getPeriod: function () {

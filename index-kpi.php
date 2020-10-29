@@ -14,6 +14,10 @@ switch ($view) {
         $title = "KPI Menu - Monthly Summary (Simple)";
         $url = "./kpi-index/summary-kpi-simple.php";
         break;
+    case 'mssd'://Simplified Monthly Summary
+        $title = "KPI Menu - Monthly Summary (Simple) Details";
+        $url = "./kpi-index/summary-kpi-simple-details.php";
+        break;
     case 'ssd'://Detailed Summary by Staff
         $title = "KPI Menu - Detail Summary by Staff";
         $url = "./kpi-index/summary-kpi.php";

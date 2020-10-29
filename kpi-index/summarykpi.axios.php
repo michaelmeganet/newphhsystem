@@ -401,6 +401,41 @@ switch ($action) {
         $noofdays = date_format(date_create($date), 't');
         echo $noofdays;
         break;
+    case'getStaffData':
+        $staffid = $received_data->staffid;
+        $staffDetails = get_staffDetails($staffid);
+        if (!empty($staffDetails)){
+            $staffname = $staffDetails['name'];
+            echo json_encode(array('status' => 'ok', 'msg' =>$staffname));
+        }else{
+            echo json_encode(array('status' => 'error', 'msg' => 'Cannot find Staff Name !'));
+        }
+        break;
+    case 'getMachineData':
+        $machineid = $received_data->machineid;
+        $qr = "SELECT * FROM machine WHERE machineid = '$machineid'";
+        $objSQL = new SQL($qr);
+        $result = $objSQL->getResultOneRowArray();
+        if (!empty($result)){
+            $mcid = $result['mcid'];
+            $machinename = $result['name'];
+            $machinemodel = $result['model'];
+            $machineno = $result['machine_no'];
+            $resArr = array(
+                'status' => 'ok',
+                'mcid' => $mcid,
+                'machinename' => $machinename,
+                'machinemodel' => $machinemodel,
+                'machineno' => $machineno
+            );
+        }else{
+            $resArr = Array(
+                'status' => 'error',
+                'msg' => 'Cannot find Machine Details for machineid = '.$machineid
+            );
+        }
+        echo json_encode($resArr);
+        break;
     case 'getSimpleKPIMonthly':
         #$period = $_POST['period'];
         #$jobstatus = $_POST['jobstatus'];
@@ -616,7 +651,7 @@ switch ($action) {
                                 'machinename' => $machinename,
                                 'weight_gain' => number_format(round($sum_index_gain, 2), 2),
                                 'estimated_totalkpi' => number_format(round($sum_KPI, 7), 7),
-                                'data_found' => $totaldata
+                                #'data_found' => $totaldata
                             );
                         }
                         echo json_encode($det_KPI);
@@ -736,11 +771,11 @@ switch ($action) {
                         $det_kpi_row[] = array(
                             'Date' => date_format(date_create($date), 'd-m-Y'),
                             'Shift' => $shift,
-                            'Total Weight (KG)' => $output_weight_sum,
+                            'Total Weight (KG)' => round($output_weight_sum,2),
                             'Rate (RM)' => $RMRate,
-                            'KPI' => $kpi,
-                            'Calculated Value by KPI (RM)' => $total_kpi,
-                            'Real Value by KPI (RM)' => $real_total_kpi
+                            'KPI' => round($kpi,2),
+                            'Calculated Value by KPI (RM)' => round($total_kpi,2),
+                            'Real Value by KPI (RM)' => round($real_total_kpi,2)
                         );
                         $weight[$shift_stat] += $output_weight_sum;
                         $rlTkpi += $real_total_kpi;
@@ -753,9 +788,9 @@ switch ($action) {
                 }
             }
         }
-        echo $cntDataShift . "\n";
-        echo "totalkpi = $rlTkpi\n;";
-        print_r($weight);
+        #echo $cntDataShift . "\n";
+        #echo "totalkpi = $rlTkpi\n;";
+        #print_r($weight);
         echo json_encode($det_kpi_row);
         break;
     case 'getDetailedKPIStaff':
