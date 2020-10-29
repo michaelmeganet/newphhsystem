@@ -185,17 +185,25 @@ function get_filteredDetails($table, $date, $summType, $staffid, $mcid, $shift) 
     }
     if ($summType == 'daily') {
         $qr = "SELECT * FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
+                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
                 . "AND mcid = $mcid AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') "
                 . $timecheck
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'"
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'"
                 . "ORDER BY dateofcompletion, staffid, mcid ASC";
     } elseif ($summType == 'all') {
         $qr = "SELECT * FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
+                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
                 . "AND mcid = $mcid AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') "
                 . $timecheck
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'"
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'"
                 . "ORDER BY dateofcompletion, staffid, mcid ASC";
     }
     $objSQL = new SQL($qr);
@@ -234,17 +242,29 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
         $timecheck = '';
     }
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ'"
+                #. " AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' "
                 . "AND staffid = '$staffid' "
                 . "AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
                 . "$timecheck "
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%' ORDER BY mcid ASC";
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
+                . " ORDER BY mcid ASC";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' "
                 . "AND staffid = '$staffid' "
                 . "AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') "
                 . "$timecheck "
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%' ORDER BY mcid ASC";
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
+                . " ORDER BY mcid ASC";
     }
     #echo "qr = $qr\n";
     $objSQL = new SQL($qr);
@@ -258,11 +278,19 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
 
 function get_distinctMachine_M($table, $date, $summType) {
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') ORDER BY mcid ASC"
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') ORDER BY mcid ASC"
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') ORDER BY mcid ASC"
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') ORDER BY mcid ASC"
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -275,11 +303,19 @@ function get_distinctMachine_M($table, $date, $summType) {
 
 function get_distinctStaff_M($table, $date, $summType, $mcid) {
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
+        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
+        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -308,17 +344,23 @@ function get_distinctStaff($table, $date, $summType, $shift) {
     if ($summType == 'daily') {
         $qr = "SELECT DISTINCT staffid FROM $table "
                 . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
-                . "AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' "
                 . "AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
                 . "$timecheck"
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'";
     } elseif ($summType == 'all') {
         $qr = "SELECT DISTINCT staffid FROM $table "
                 . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
-                . "AND NOT jobtype ='cncmachining' AND NOT jobtype = 'precisiongrinding' AND NOT jobtype = 'roughgrinding' "
+                #. "AND NOT jobtype ='cncmachining' "
+                #. "AND NOT jobtype = 'precisiongrinding' "
+                . "AND NOT jobtype = 'roughgrinding' "
                 . "AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
                 . "$timecheck"
-                . "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' AND machineid NOT LIKE 'RGG%'";
+                #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
+                . "AND machineid NOT LIKE 'RGG%'";
         ;
     }
     $objSQL = new SQL($qr);
@@ -404,10 +446,10 @@ switch ($action) {
     case'getStaffData':
         $staffid = $received_data->staffid;
         $staffDetails = get_staffDetails($staffid);
-        if (!empty($staffDetails)){
+        if (!empty($staffDetails)) {
             $staffname = $staffDetails['name'];
-            echo json_encode(array('status' => 'ok', 'msg' =>$staffname));
-        }else{
+            echo json_encode(array('status' => 'ok', 'msg' => $staffname));
+        } else {
             echo json_encode(array('status' => 'error', 'msg' => 'Cannot find Staff Name !'));
         }
         break;
@@ -416,7 +458,7 @@ switch ($action) {
         $qr = "SELECT * FROM machine WHERE machineid = '$machineid'";
         $objSQL = new SQL($qr);
         $result = $objSQL->getResultOneRowArray();
-        if (!empty($result)){
+        if (!empty($result)) {
             $mcid = $result['mcid'];
             $machinename = $result['name'];
             $machinemodel = $result['model'];
@@ -428,10 +470,10 @@ switch ($action) {
                 'machinemodel' => $machinemodel,
                 'machineno' => $machineno
             );
-        }else{
+        } else {
             $resArr = Array(
                 'status' => 'error',
-                'msg' => 'Cannot find Machine Details for machineid = '.$machineid
+                'msg' => 'Cannot find Machine Details for machineid = ' . $machineid
             );
         }
         echo json_encode($resArr);
@@ -472,6 +514,8 @@ switch ($action) {
                     $staffname = null;
                 }
                 $machineList = get_distinctMachine($kpidetailstable, $date, $summType, $staffid, $shift);
+                #print_r($machineList);
+                #echo "\n";
                 foreach ($machineList as $data_machine) {
                     $mcid = $data_machine['mcid'];
                     $machineid = $data_machine['machineid'];
@@ -518,10 +562,10 @@ switch ($action) {
                             #echo $staffid.$machineid;
                             $output_weight_sum += $output_weight;
                             if (isset($sum_deltaOutWMachine[$start_date][$shiftVal])) {
-                               # echo "old = ".$sum_deltaOutWMachine[$start_date][$shiftVal];
-                               # echo "added by $output_weight";
+                                # echo "old = ".$sum_deltaOutWMachine[$start_date][$shiftVal];
+                                # echo "added by $output_weight";
                                 $sum_deltaOutWMachine[$start_date][$shiftVal] += $output_weight;
-                               # echo "result = ".$sum_deltaOutWMachine[$start_date][$shiftVal];
+                                # echo "result = ".$sum_deltaOutWMachine[$start_date][$shiftVal];
                             } else {
                                 $sum_deltaOutWMachine[$start_date][$shiftVal] = $output_weight;
                             }
@@ -543,7 +587,7 @@ switch ($action) {
                                 } else {
                                     $total_kpi = 0;
                                 }
-                                if ($total_kpi < 0){
+                                if ($total_kpi < 0) {
                                     $total_kpi = 0;
                                 }
                                 $sum_total_kpi += $total_kpi;
@@ -563,19 +607,21 @@ switch ($action) {
                             #'value_gain_normal' => number_format(round($total_kpi_normal, 2), 2),
                             #'value_gain_overtime' => number_format(round($total_kpi_overtime, 2), 2),
                             'total_value_gain(RM)' => number_format(round($sum_total_kpi, 2), 2),
-                            'data_found' => $cnt
+                                #'data_found' => $cnt
                         );
                         //push this to det_KPI array
                     } else {
-                        
+                        #echo"can't find data for staffname = $staffname and machineid = $machineid#";
                     }
                 }
-                $det_KPI[] = array(
-                    'staffid' => $staffid,
-                    'staffname' => $staffname,
-                    'details' => $det_kpi_row
-                );
-                unset($det_kpi_row);
+                if (isset($det_kpi_row)) {
+                    $det_KPI[] = array(
+                        'staffid' => $staffid,
+                        'staffname' => $staffname,
+                        'details' => $det_kpi_row
+                    );
+                    unset($det_kpi_row);
+                }
             }
 
             echo json_encode($det_KPI);
@@ -651,7 +697,7 @@ switch ($action) {
                                 'machinename' => $machinename,
                                 'weight_gain' => number_format(round($sum_index_gain, 2), 2),
                                 'estimated_totalkpi' => number_format(round($sum_KPI, 7), 7),
-                                #'data_found' => $totaldata
+                                    #'data_found' => $totaldata
                             );
                         }
                         echo json_encode($det_KPI);
@@ -771,11 +817,11 @@ switch ($action) {
                         $det_kpi_row[] = array(
                             'Date' => date_format(date_create($date), 'd-m-Y'),
                             'Shift' => $shift,
-                            'Total Weight (KG)' => round($output_weight_sum,2),
+                            'Total Weight (KG)' => round($output_weight_sum, 2),
                             'Rate (RM)' => $RMRate,
-                            'KPI' => round($kpi,2),
-                            'Calculated Value by KPI (RM)' => round($total_kpi,2),
-                            'Real Value by KPI (RM)' => round($real_total_kpi,2)
+                            'KPI' => round($kpi, 2),
+                            'Calculated Value by KPI (RM)' => round($total_kpi, 2),
+                            'Real Value by KPI (RM)' => round($real_total_kpi, 2)
                         );
                         $weight[$shift_stat] += $output_weight_sum;
                         $rlTkpi += $real_total_kpi;
