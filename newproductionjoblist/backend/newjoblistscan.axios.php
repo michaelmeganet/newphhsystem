@@ -100,19 +100,21 @@ switch ($action) {
                 $schDetail = get_SchedulingDetails($prev_period, $jobcode);
                 if ($schDetail == 'empty') {
                     throw new Exception('Cannot Find Data for Jobcode = ' . $jobcode . " on period = $this_period and $prev_period", 101);
+                }else{
+                    $period = $prev_period;
                 }
+            }else{
+                $period = $this_period;
             }
             $sid = $schDetail['sid'];
             $pmid = $schDetail['process'];
             $schDetail['processname'] = get_processName($pmid);
-            $outDetail = get_OutputDetails($this_period, $sid);
-            if ($outDetail == 'empty') {
-                $outDetail = get_OutputDetails($prev_period, $sid);
-            }
-
             $cuttingtype = $schDetail['cuttingtype'];
             $totalquantity = $schDetail['quantity'];
             $processcode = $schDetail['process'];
+            
+            $outDetail = get_OutputDetails($period, $sid);
+            
             $objJW = new JOB_WORK_DETAIL($jobcode, $cuttingtype, $processcode, $totalquantity, $outDetail);
             $jobworkDetail = $objJW->get_arr_jobWork();
             $jobworkStatus = $objJW->get_ex_jobwork();
