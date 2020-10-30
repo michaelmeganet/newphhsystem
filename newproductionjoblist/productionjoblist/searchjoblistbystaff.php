@@ -1,5 +1,5 @@
 <?php
-require_once("include/session.php");
+// require_once("include/session.php");
 include_once("include/admin_check.php");
 include_once("includes/input_modechange.php");
 ?>
