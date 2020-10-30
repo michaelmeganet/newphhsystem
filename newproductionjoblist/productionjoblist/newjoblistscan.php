@@ -42,7 +42,7 @@ $branch = $rowadmin['branch'];
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td>
+            <td >
                 <table width="100%" cellspacing="0" cellpadding="2" border="0">
                     <tr>
                         <td width='30%'><label>Staff ID : </label></td>
@@ -54,7 +54,7 @@ $branch = $rowadmin['branch'];
                         <td><input type='text' v-model='jobcode' id='jobcode' name='jobcode' v-on:keyup.enter='clearData();parseJobCode()' /></td>
                         <td v-html='jobcode_response'>{{jobcode_response}}</td>
                     </tr>
-                    <tr>
+                    <tr v-show='error != "error" && error != ""'>
                         <td colspan='2'>
                             <label>Process Name = {{schedulingDetail.processname}}</label><br>
                             <label>Cutting Type = {{schedulingDetail.cuttingtype}}</label><br>
@@ -78,23 +78,23 @@ $branch = $rowadmin['branch'];
                 </table>
             </td>
         </tr>
-        <tr><!--Breadcrumbs Area-->
+        <tr v-show="error != 'error' && error != ''"><!--Breadcrumbs Area-->
             <td>
                 Progress : <br>
                 <ul style='list-style: none;display: inline' >
                     <li style='display: inline' v-for='data in jobworkDetail'>
                         <font style='font-weight:bolder;color:Yellow;' v-if='data.process.toLowerCase() == proc'>
-                            {{data.process}}
+                        {{data.process}}
                         </font>
                         <font style='color:lightblue;' v-else>
-                            {{data.process}}
+                        {{data.process}}
                         </font>
                         >
                     </li>
                 </ul>
             </td>
         </tr>
-        <tr><!--Scan Area -->
+        <tr v-show="error != 'error' && error != ''"><!--Scan Area -->
             <td>
                 <div v-show="proc_status == 'start'">
                     <table border="0">
@@ -152,7 +152,7 @@ $branch = $rowadmin['branch'];
                 </div>
             </td>
         </tr>
-        <tr>
+        <tr v-show="error != 'error' && error != ''">
             <td>
                 <table border="1">
                     <thead>
@@ -168,6 +168,14 @@ $branch = $rowadmin['branch'];
                 </table>
             </td>
         </tr>
+        <tr v-show='error == "error"'>
+            <td>
+                {{errormsg}}
+            </td>
+        </tr>
+        <tr v-show='error == ""'>
+            Please Scan a Job Code Above.
+        </tr>
     </table>
 </div>
 <script>
@@ -176,6 +184,8 @@ $branch = $rowadmin['branch'];
         el: '#mainArea',
         data: {
             phpajaxresponsefile: 'backend/newjoblistscan.axios.php',
+            error: '',
+            errormsg: '',
             staffid: '',
             staff_response: '',
             staff_response_stats: '',
@@ -234,7 +244,7 @@ $branch = $rowadmin['branch'];
                 if (this.jobcode_response_stats === 'error') {
                     this.jobcode = '';
                     document.getElementById('jobcode').focus();
-                } else {
+                } else if(this.jobcode_response_stats != '') {
                     document.getElementById('machineid').focus();
                     this.getJobWorkList();
                     this.jobcode = '';
@@ -439,12 +449,15 @@ $branch = $rowadmin['branch'];
                     console.log(response.data);
                     scanVue.jobWorkStatus = response.data.status;
                     if (response.data.status === 'ok') {
+                        scanVue.error = 'ok';
                         scanVue.jobworkDetail = response.data.jobworkDetail;
                         scanVue.jobworkStatus = response.data.jobworkStatus;
                         scanVue.schedulingDetail = response.data.schDetail;
                         scanVue.outputDetail = response.data.outDetail;
                         scanVue.totalquantity = response.data.schDetail.quantity;
                     } else {
+                        scanVue.error = 'error';
+                        scanVue.errormsg = response.data.msg;
                     }
                 }).then(function () {
                     scanVue.selectProcess();
@@ -453,6 +466,8 @@ $branch = $rowadmin['branch'];
             },
             clearData: function () {
                 this.jobcode_end = '';
+                this.parsedJobCode = '';
+                this.error = '';
                 this.jobcode_response = '';
                 this.jobcode_response_stats = '';
                 this.jobworkDetail = '';

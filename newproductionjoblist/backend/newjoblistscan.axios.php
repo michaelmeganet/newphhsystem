@@ -254,7 +254,7 @@ switch ($action) {
                 $resultpro = $objSQLpro->getResultOneRowArray();
                 if (empty($resultpro)) {
                     throw new Exception("<span style='color:red'>Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>. "
-                    . "\nAre you scanning an old Job?"
+                    . "\nJobcode from from 2 month ago cannot be scanned anymore."
                     . "\nIf you believe this is an error, please contact Administrator.</span>", 101);
                 }
             }
