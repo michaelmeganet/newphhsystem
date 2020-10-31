@@ -55,15 +55,29 @@ $branch = $rowadmin['branch'];
                         <td v-html='jobcode_response'>{{jobcode_response}}</td>
                     </tr>
                     <tr v-show='error != "error" && error != ""'>
-                        <td colspan='2'>
-                            <label>Process Name = {{schedulingDetail.processname}}</label><br>
-                            <label>Cutting Type = {{schedulingDetail.cuttingtype}}</label><br>
-                            <label>Quantity Need= {{schedulingDetail.quantity}}</label>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>Process Name :</td>
+                                    <td>&nbsp;</td>
+                                    <td>{{schedulingDetail.processname}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Cutting Type :</td>
+                                    <td>&nbsp;</td>
+                                    <td>{{schedulingDetail.cuttingtype}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Quantity Need :</td>
+                                    <td>&nbsp;</td>
+                                    <td>{{schedulingDetail.quantity}}</td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
             </td>
-            <td style='text-align:left;vertical-align:middle'>
+            <td style='text-align:left;vertical-align:middle' colspan='2'>
                 <table border='1' v-if='jobworkDetail != ""'>
                     <tr>
                         <th>Process Name</th>
@@ -89,7 +103,7 @@ $branch = $rowadmin['branch'];
                         <font style='color:lightblue;' v-else>
                         {{data.process}}
                         </font>
-                        >
+
                     </li>
                 </ul>
             </td>
@@ -144,7 +158,7 @@ $branch = $rowadmin['branch'];
                     </table>
                 </div>
                 <div v-show="proc_status == '' && proc == 'All Finished'">
-                    Jobcode {{parseJobCode}} has already done process<br>
+                    Jobcode <b style='color:yellow'>{{parsedJobCode}}</b> has already done process<br>
                     Contact Administrator if this is an error.
                 </div>
                 <div v-show='proc_status == "" && proc == ""'>
@@ -184,6 +198,7 @@ $branch = $rowadmin['branch'];
         el: '#mainArea',
         data: {
             phpajaxresponsefile: 'backend/newjoblistscan.axios.php',
+            input_mode: '',
             error: '',
             errormsg: '',
             staffid: '',
@@ -232,6 +247,20 @@ $branch = $rowadmin['branch'];
             }
         },
         watch: {
+            staffid: function () {
+                if (this.staffid.length === 6 && this.input_mode !== 'scan') {
+                    this.clearData();
+                    this.getStaffName();
+                }
+            },
+            machineid: function () {
+                if (this.machineid.length === 5 && this.input_mode !== 'scan') {
+                    this.getMachineName();
+                }
+                if (this.machineid.length > 0 && this.machineid.length < 5) {
+                    this.machine_response = ''
+                }
+            },
             staff_response: function () {
                 if (this.staff_response_stats === 'error') {
                     this.staffid = '';
@@ -244,7 +273,7 @@ $branch = $rowadmin['branch'];
                 if (this.jobcode_response_stats === 'error') {
                     this.jobcode = '';
                     document.getElementById('jobcode').focus();
-                } else if(this.jobcode_response_stats != '') {
+                } else if (this.jobcode_response_stats != '') {
                     document.getElementById('machineid').focus();
                     this.getJobWorkList();
                     this.jobcode = '';
@@ -252,16 +281,18 @@ $branch = $rowadmin['branch'];
             },
             quantity: function () {
                 if (this.machineid !== '') {
-                    remqty = this.remainingquantity;
-                    if (parseFloat(this.quantity) <= 0) {
-                        this.quantity_response = 'Quantity cannot be less than or same as zero';
-                        //this.quantity = '';
-                    } else if (parseFloat(this.quantity) > remqty) {
-                        console.log('remqty = ' + remqty);
-                        this.quantity_response = 'Quantity cannot be more than remaining quantity';
-                        //this.quantity = '';
-                    } else {
-                        this.quantity_response = '';
+                    if (this.quantity !== '') {
+                        remqty = this.remainingquantity;
+                        if (parseFloat(this.quantity) <= 0) {
+                            this.quantity_response = 'Quantity cannot be less than or same as zero';
+                            this.quantity = '';
+                        } else if (parseFloat(this.quantity) > remqty) {
+                            console.log('remqty = ' + remqty);
+                            this.quantity_response = 'Quantity cannot be more than remaining quantity';
+                            this.quantity = '';
+                        } else {
+                            this.quantity_response = '';
+                        }
                     }
                 } else {
                     this.$refs.machineid.focus();
@@ -270,11 +301,13 @@ $branch = $rowadmin['branch'];
                 }
             },
             machine_response: function () {
-                if (this.machine_response.indexOf('Cannot') >= 0) {
-                    this.machineid = '';
-                    document.getElementById('machineid').focus();
-                } else {
-                    document.getElementById('quantity').focus();
+                if (this.machine_response !== '') {
+                    if (this.machine_response.indexOf('Cannot') >= 0) {
+                        this.machineid = '';
+                        document.getElementById('machineid').focus();
+                    } else if (this.machine_response.indexOf('Cannot') < 0) {
+                        document.getElementById('quantity').focus();
+                    }
                 }
             },
             date_start: function () {
@@ -487,7 +520,7 @@ $branch = $rowadmin['branch'];
             }
         },
         beforeMount: function () {
-
+            this.input_mode = document.getElementById('input_mode').value;
         },
         mounted: function () {
 
