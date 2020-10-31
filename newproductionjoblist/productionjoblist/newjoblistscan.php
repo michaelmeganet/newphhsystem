@@ -96,14 +96,14 @@ $branch = $rowadmin['branch'];
             <td>
                 Progress : <br>
                 <ul style='list-style: none;display: inline' >
-                    <li style='display: inline' v-for='data in jobworkDetail'>
-                        <font style='font-weight:bolder;color:Yellow;' v-if='data.process.toLowerCase() == proc'>
+                    <li style='display: inline' v-for='(data,key,index) in jobworkDetail'>
+                        <font style='font-weight:bolder;font-size:1.2em' v-bind:style='{color: breadcrumb_color_flash}' v-if='data.process.toLowerCase() == proc'>
                         {{data.process}}
                         </font>
-                        <font style='color:lightblue;' v-else>
+                        <font style='color:lightblue;font-size:1.2em' v-else>
                         {{data.process}}
                         </font>
-
+                        <span v-if='key != Object.keys(jobworkDetail).length - 1'>/</span>
                     </li>
                 </ul>
             </td>
@@ -220,10 +220,14 @@ $branch = $rowadmin['branch'];
             quantity: '',
             quantity_response: '',
             totalquantity: '',
+            scan_status: '',
             scan_response: '',
             date_start: '',
             elapsedTimer: null,
-            elapsedTime: ''
+            elapsedTime: '',
+            breadcrumb_color_timer: null,
+            breadcrumb_color_flash: 'yellow',
+            focusTimer: null
         },
         computed: {
             remainingquantity: function () {
@@ -274,7 +278,7 @@ $branch = $rowadmin['branch'];
                     this.jobcode = '';
                     document.getElementById('jobcode').focus();
                 } else if (this.jobcode_response_stats != '') {
-                    document.getElementById('machineid').focus();
+                    //document.getElementById('machineid').focus();
                     this.getJobWorkList();
                     this.jobcode = '';
                 }
@@ -316,6 +320,21 @@ $branch = $rowadmin['branch'];
                     this.elapsedTime = '';
                     this.createElapsedTimer();
                 }
+            },
+            proc_status: function () {
+                if (this.proc_status != '') {
+                    this.createBreadCrumbTimer();
+                    this.createFocus('machineid');
+                } else {
+                    clearInterval(this.breadcrumb_color_timer);
+                    this.breadcrumb_color_timer = null;
+                    this.createFocus('jobcode_end');
+                }
+            },
+            scan_response: function () {
+                if (this.scan_status !== 'error') {
+                    this.createFocus('jobcode');
+                }
             }
 
         },
@@ -329,8 +348,23 @@ $branch = $rowadmin['branch'];
                 var second = Math.floor((diffTime - (hour * 1000 * 60 * 60) - (minute * 1000 * 60)) / (1000));
                 this.elapsedTime = hour + 'hours, ' + minute + ' minutes, ' + second + ' seconds';
             },
+            createBreadCrumbTimer: function () {
+                this.breadcrumb_color_timer = setInterval(function () {
+                    if (scanVue.breadcrumb_color_flash == 'yellow') {
+                        scanVue.breadcrumb_color_flash = 'blue';
+                    } else {
+                        scanVue.breadcrumb_color_flash = 'yellow';
+                    }
+                }, 500);
+            },
             createElapsedTimer: function () {
                 this.elapsedTimer = setInterval(this.getElapsedTime, 100);
+            },
+            createFocus: function (id) {
+                clearTimeout(this.focusTimer);
+                this.focusTimer = setTimeout(function () {
+                    document.getElementById(id).focus();
+                }, 200);
             },
             getDateStart: function () {
                 if (this.proc_status === 'end') {
@@ -364,9 +398,11 @@ $branch = $rowadmin['branch'];
                     }).then(function (response) {
                         console.log('on getJobUpdate');
                         console.log(response.data);
+                        scanVue.scan_status = response.data.status;
                         scanVue.scan_response = response.data.msg;
                     });
                 } else {
+                    scanVue.scan_status = 'error';
                     this.scan_response = 'Cannot Start, ' + this.quantity_response;
                 }
             },
@@ -466,6 +502,7 @@ $branch = $rowadmin['branch'];
                         if (scanVue.parsedJobCode == response.data.msg) {
                             scanVue.getJobUpdate();
                         } else {
+                            scanVue.scan_status = 'error';
                             scanVue.scan_response = '<font style="color:red">Scanned Job : ' + response.data.msg + " is not the same.</font>";
 
                         }
@@ -523,7 +560,7 @@ $branch = $rowadmin['branch'];
             this.input_mode = document.getElementById('input_mode').value;
         },
         mounted: function () {
-
+            this.breadcrumb_color_flash = 'blue';
         }
     });
 </script>

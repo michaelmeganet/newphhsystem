@@ -424,7 +424,7 @@ switch ($action) {
     case 'getJobWorkDetail':
         $period = $received_data->period;
         $jobcode = $received_data->jobcode;
-        $staffid = $received_data->staffid;
+        #$staffid = $received_data->staffid;
 
         //begin parsing the jobcode;
         //jobcode format is AA BBB CCDD EEEE FF; Length is 19, Min 0, Max 18
