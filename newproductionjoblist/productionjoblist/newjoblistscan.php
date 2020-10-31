@@ -26,7 +26,7 @@ $branch = $rowadmin['branch'];
 
 <input type="hidden" id="input_mode" value="<?php echo $getPage; ?>" />
 <div id='mainArea'>
-    <table width="100%" cellspacing="0" cellpadding="2" border="1" style='text-align:left;vertical-align:middle'>
+    <table width="100%" cellspacing="0" cellpadding="2" border="0" style='text-align:left;vertical-align:middle'>
         <tr>
             <td width="49%" valign="top">PRODUCTION JOBLIST - NEW JOBLIST SCAN - <b><?php echo $pageMode; ?></b></td>
             <td width="2%">&nbsp;</td>
@@ -45,31 +45,31 @@ $branch = $rowadmin['branch'];
             <td >
                 <table width="100%" cellspacing="0" cellpadding="2" border="0">
                     <tr>
-                        <td width='30%'><label>Staff ID : </label></td>
-                        <td width='30%'><input type='text' v-model='staffid' id='staffid' name='staffid' v-on:keyup.enter='clearData();getStaffName()'/></td>
+                        <td width='20%'><label>Staff ID</label></td>
+                        <td width='30%'>:<input type='text' v-model='staffid' id='staffid' name='staffid' v-on:keyup.enter='clearData();getStaffName()'/></td>
                         <td v-html='staff_response'>{{staff_response}}</td>
                     </tr>
                     <tr>
-                        <td><label>Job Code : </label></td>
-                        <td><input type='text' v-model='jobcode' id='jobcode' name='jobcode' v-on:keyup.enter='clearData();parseJobCode()' /></td>
+                        <td><label>Job Code</label></td>
+                        <td>:<input type='text' v-model='jobcode' id='jobcode' name='jobcode' v-on:keyup.enter='clearData();parseJobCode()' /></td>
                         <td v-html='jobcode_response'>{{jobcode_response}}</td>
                     </tr>
                     <tr v-show='error != "error" && error != ""'>
-                        <td>
+                        <td colspan='3'>
                             <table>
                                 <tr>
-                                    <td>Process Name :</td>
-                                    <td>&nbsp;</td>
+                                    <td>Process Name</td>
+                                    <td>&nbsp;:</td>
                                     <td>{{schedulingDetail.processname}}</td>
                                 </tr>
                                 <tr>
-                                    <td>Cutting Type :</td>
-                                    <td>&nbsp;</td>
+                                    <td>Cutting Type</td>
+                                    <td>&nbsp;:</td>
                                     <td>{{schedulingDetail.cuttingtype}}</td>
                                 </tr>
                                 <tr>
-                                    <td>Quantity Need :</td>
-                                    <td>&nbsp;</td>
+                                    <td>Quantity Need</td>
+                                    <td>&nbsp;:</td>
                                     <td>{{schedulingDetail.quantity}}</td>
                                 </tr>
                             </table>
@@ -88,17 +88,17 @@ $branch = $rowadmin['branch'];
                         <td>{{index.status}}</td>
                         <!--<td><input type='radio' v-model='proc' v-bind:value='processname' /></td>-->
                     </tr>
-
                 </table>
             </td>
         </tr>
+        <tr><td>&nbsp;</td></tr>
         <tr v-show="error != 'error' && error != ''"><!--Breadcrumbs Area-->
             <td>
                 Progress : <br>
                 <ul style='list-style: none;display: inline' >
                     <li style='display: inline' v-for='(data,key,index) in jobworkDetail'>
                         <font style='font-weight:bolder;font-size:1.2em' v-bind:style='{color: breadcrumb_color_flash}' v-if='data.process.toLowerCase() == proc'>
-                        {{data.process}}
+                        {{data.process}} (Scan {{proc_status}})
                         </font>
                         <font style='color:lightblue;font-size:1.2em' v-else>
                         {{data.process}}
@@ -108,6 +108,8 @@ $branch = $rowadmin['branch'];
                 </ul>
             </td>
         </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td></tr>
         <tr v-show="error != 'error' && error != ''"><!--Scan Area -->
             <td>
                 <div v-show="proc_status == 'start'">
@@ -166,6 +168,10 @@ $branch = $rowadmin['branch'];
                 </div>
             </td>
         </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr v-show='error != "error" && error != ""'
+            ><td>Job Records :</td>
+        </tr>
         <tr v-show="error != 'error' && error != ''">
             <td>
                 <table border="1">
@@ -186,9 +192,6 @@ $branch = $rowadmin['branch'];
             <td>
                 {{errormsg}}
             </td>
-        </tr>
-        <tr v-show='error == ""'>
-            Please Scan a Job Code Above.
         </tr>
     </table>
 </div>
@@ -324,11 +327,14 @@ $branch = $rowadmin['branch'];
             proc_status: function () {
                 if (this.proc_status != '') {
                     this.createBreadCrumbTimer();
-                    this.createFocus('machineid');
+                    if (this.proc_status === 'start') {
+                        this.createFocus('machineid');
+                    } else if (this.proc_status === 'end') {
+                        this.createFocus('jobcode_end');
+                    }
                 } else {
                     clearInterval(this.breadcrumb_color_timer);
                     this.breadcrumb_color_timer = null;
-                    this.createFocus('jobcode_end');
                 }
             },
             scan_response: function () {
