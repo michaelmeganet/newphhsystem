@@ -1,9 +1,11 @@
 <?php 
-include_once("../include/mysql_connect.php");
+#include_once("../include/mysql_connect.php");
+include_once("../includes/dbh.inc.php");
+include_once("../includes/variables.inc.php");
 //require_once("../include/session.php");
 //include_once("../include/admin_check.php");
 
-session_start();
+#session_start();
 function debug_to_console( $data ) {
 
     if ( is_array( $data ) ){
@@ -28,7 +30,9 @@ if($_GET['ye'] && $_GET['mo'] && $_GET['da'] && $_GET['bid']) {
   // echo "\$bid =  $bid <br>";
   $dat = $year."-".sprintf("%02d", $month)."-".sprintf("%02d", $day);  
   $datdat = sprintf("%02d", substr($year, 2, 2)).sprintf("%02d", $month);
-  
+  if (!isset($com)){
+      $com = '';
+  }
   $protab = "production_scheduling".$com."_".$datdat; 
   
   if($month == 12){
@@ -56,8 +60,10 @@ if($_GET['ye'] && $_GET['mo'] && $_GET['da'] && $_GET['bid']) {
   $protablast = "production_scheduling".$com."_".$datdatlast;
   
   $sqlbra = "SELECT * FROM branch_location WHERE bid = $bid";
-  $resultbra = $rundb->Query($sqlbra);
-  $rowbra = $rundb->FetchArray($resultbra);
+  $objSqlbra = new SQL($sqlbra);
+  $rowbra = $objSqlbra->getResultOneRowArray();
+#  $resultbra = $rundb->Query($sqlbra);
+#  $rowbra = $rundb->FetchArray($resultbra);
   //$branchjoblist = $rowbra['bjlindicator'];
 ?>
 

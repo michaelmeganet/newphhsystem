@@ -113,8 +113,10 @@ switch ($action) {
         $staffid = $received_data->staffid;         //staffid
         $jobdoneqty = ($received_data->quantity) ? $received_data->quantity : null;
         $machineid = ($received_data->machineid) ? $received_data->machineid : null;     //machineid
-        $machineDtl = get_MachineByID($machineid);
-        $mcid = $machineDtl['mcid'];
+        if ($machineid != null) {
+            $machineDtl = get_MachineByID($machineid);
+            $mcid = $machineDtl['mcid'];
+        }
         //parse jobcode
         try {
             $parseJobCode = parseJobcode($jobcode);
@@ -167,15 +169,14 @@ switch ($action) {
                 $objSQLpro = new SQL($sqlpro);
                 $resultpro = $objSQLpro->getResultOneRowArray();
                 if (empty($resultpro)) {
-                    throw new Exception("<span style='color:red'>Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>. "
-                    . "\nAre you scanning an old Job?"
+                    throw new Exception("<span style='color:red'>Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>.<br> "
+                    . "\nCannot find this jobno in <font style='color:yellow'>20".substr($this_period,0,2)."-".substr($this_period,2,2)."</font> and in <font style='color:yellow'>20".substr($last_period,0,2)."-".substr($last_period,2,2)."</font><br>"
                     . "\nIf you believe this is an error, please contact Administrator.</span>", 101);
                 }
             }
             $totalqty = $resultpro['quantity'];
             $sid = $resultpro['sid'];
             #echo "sid = $sid";
-
             //check if this process needed or not
             $objJW = new JOB_WORK_DETAIL($parseJobCode, $resultpro['cuttingtype'], $resultpro['process'], $totalqty);
             $JWDetails = $objJW->get_ex_jobwork();
@@ -207,11 +208,12 @@ switch ($action) {
                     } else {//if has not started/ended
                         $sqlpotr = "SELECT * FROM $pottab WHERE sid = $sid AND jobtype = '$proc' AND (date_end IS NOT NULL OR NOT date_end LIKE '') ORDER BY poid DESC LIMIT 0, 1";
                         $objSQLpotr = new SQL($sqlpotr);
-                        $potrResult = $objSQLpotr->getResultRowArray();
+                        $potrResult = $objSQLpotr->getResultOneRowArray();
+                        #echo "sql = $sqlpotr";
                         if (!empty($potrResult)) { //if there's already data previously
                             #echo "not empty<br>";
-                            $rem_qty = $potrResult['remainingquantity'];
-                            if ($rem_qty != 0) { //if previous ended process is not null
+                            $remainingqty = $potrResult['remainingquantity'];
+                            if ($remainingqty != 0) { //if previous ended process is not null
                                 #echo "reminingqty is not null, \n";
                                 #echo "still have qty to be done<br>";
                                 $remainingqty = $remainingqty - $jobdoneqty;
@@ -283,7 +285,7 @@ switch ($action) {
                         $poid = $rowpot['poid'];
                         #echo "poid = $poid\n";
                         $qrUpdate = "UPDATE $pottab
-	  			    SET date_end = '$currDateTime' , end_by = '$staffid' 
+                    SET date_end = '$currDateTime' , end_by = '$staffid' 
                                     WHERE poid = $poid AND sid = $sid AND jobtype = '$proc'";
                         $objSQLupd = new SQL($qrUpdate);
                         $updResult = $objSQLupd->getUpdate();

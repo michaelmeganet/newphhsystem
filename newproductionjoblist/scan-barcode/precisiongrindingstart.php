@@ -1,12 +1,12 @@
 <?php
-include_once("include/mysql_connect.php");
+#include_once("include/mysql_connect.php");
+include_once("includes/dbh.inc.php");
+include_once("includes/variables.inc.php");
 //require_once("include/session.php");
 //include_once("include/admin_check.php");
 include_once("includes/input_modechange.php");
 
-#session_start();
-
-//cProductionJoblist('cncmachiningstart');
+session_start();
 
 if (isset($_GET['jlstaffid'])) {
     $jlstaffid = $_GET['jlstaffid'];
@@ -14,6 +14,8 @@ if (isset($_GET['jlstaffid'])) {
 if (isset($_GET['jljobcode'])) {
     $jljobcode = $_GET['jljobcode'];
 }
+//cProductionJoblist('precisiongrindingstart');
+
 $aid = 19;
 
 $sqladmin = "SELECT * FROM admin WHERE aid = $aid";
@@ -29,9 +31,9 @@ $branch = $rowadmin['branch'];
 <input type="hidden" id="input_mode" value="<?php echo $getPage; ?>" />
 <table width="100%" cellspacing="0" cellpadding="2" border="0">
     <tr>
-        <td width="49%" valign="top">PRODUCTION JOBLIST - CNC MACHINING START - <b><?php echo $pageMode; ?></b></td>
+        <td width="49%" valign="top">PRODUCTION JOBLIST - PRECISION GRINDING START- <b><?php echo $pageMode; ?></b></td>
         <td width="2%">&nbsp;</td>
-        <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - CNC MACHINING - <b><?php echo $pageMode; ?></b> စက္စတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
+        <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - PRECISION GRINDING- <b><?php echo $pageMode; ?></b> စားျခင္းစတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
     </tr>
     <tr>
         <td><button onclick="window.location.href = '<?php echo $link; ?>'">Change Mode (current :<?php echo $pageMode; ?>)</button>
@@ -39,17 +41,16 @@ $branch = $rowadmin['branch'];
 </table>
 
 <br /><br />
-
-<div  id='mainArea'>
+<div id='mainArea'>
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
         <tr>
             <td>
-                <form name="cncmachiningstart" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
+                <form name="precisiongrindingstart" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
                     <input type="hidden" name="bid" id="bid" value="<?php echo $branch; ?>" />
 
                     <table width="100%" cellspacing="0" cellpadding="2" border="0">
                         <tr> 
-                            <td width="49%" valign="top">Scan the <strong style="color:#00FF00">Joblist Barcode Job No</strong> or <strong style="color:#00FF00">Enter the Job No manually</strong> to begin/end the CNC Machining Joblist.<br />
+                            <td width="49%" valign="top">Scan the <strong style="color:#00FF00">Joblist Barcode Job No</strong> or <strong style="color:#00FF00">Enter the Job No manually</strong> to begin/end the Precision Grinding Joblist.<br />
                                 Manual entry should begin with <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
 
                                 AA = Branch<br />
@@ -62,7 +63,7 @@ $branch = $rowadmin['branch'];
                                 HH = Year of Completion Date<br />
                                 II = Month of Completion Date</td>
                             <td width="2%">&nbsp;</td>
-                            <td width="49%" class="mmfont" valign="top">CNC Machining မစားမွီစာရင္းသြင္းရန္ႏွင့္စားျပီးစာရင္းသြင္းရန္ <strong style="color:#00FF00">အလုပ္စာရင္းအား scan ဖတ္ပါ</strong> (သို႔မဟုတ္) <strong style="color:#00FF00">အလုပ္နံပါတ္အား ရိုက္ထည့္ပါ။</strong><br />    
+                            <td width="49%" class="mmfont" valign="top">Precision Grinding မစားမွီစာရင္းသြင္းရန္ႏွင့္စားျပီးစာရင္းသြင္းရန္ <strong style="color:#00FF00">အလုပ္စာရင္းအား scan ဖတ္ပါ</strong> (သို႔မဟုတ္) <strong style="color:#00FF00">အလုပ္နံပါတ္အား ရိုက္ထည့္ပါ။</strong><br />    
                                 ကိုယ္တိုင္ရိုက္ထည့္ရန္ပံုစံမွာ <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
 
                                 AA = စက္ရံုခြဲ<br />
@@ -122,20 +123,20 @@ $branch = $rowadmin['branch'];
                                         <td colspan="2">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2"><div id="cncmachiningstart_data" v-html='jobcode_response'>{{jobcode_response}}<!-- Show Bandsaw Cut Start result here, or show Error if can't be started --></div></td>
+                                        <td colspan="2"><div id="precisiongrindingstart_data" v-html='jobcode_response'>{{jobcode_response}}<!-- Show Bandsaw Cut Start result here, or show Error if can't be started --></div></td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffID(0);
+                            <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffID(0);
                                 getMachineID(0);
-                                getCNCMachiningStart(0);
-                                document.forms['cncmachiningstart'].elements['staffid'].focus()" /></td>
+                                getPrecisionGrindingStart(0);
+                                document.forms['precisiongrindingstart'].elements['staffid'].focus()" /></td>
                         </tr>
                         <tr>
                             <td>
-                                <input type='hidden' value='cncmachining' id='proc' name='proc'/>
+                                <input type='hidden' value='precisiongrinding' id='proc' name='proc'/>
                             </td>
                         </tr>
                     </table>
@@ -144,4 +145,4 @@ $branch = $rowadmin['branch'];
         </tr>
     </table>
 </div>
-<script src='productionjoblist/scan_StartProc.js'></script>
+<script src='scan-barcode/scan_StartProc.js'></script>

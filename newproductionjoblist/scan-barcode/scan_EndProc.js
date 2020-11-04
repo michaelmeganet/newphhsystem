@@ -81,13 +81,16 @@
                 });
             },
             getJobUpdate: function () {
+                machineid = null;
+                console.log('machineid = ' + machineid);
                 axios.post(this.phpajaxresponsefile, {
                     action: 'getJobUpdate',
                     proc: procVue.proc,
                     proc_status: procVue.proc_status,
                     jobcode: procVue.jobcode,
                     staffid: procVue.staffid,
-                    quantity : procVue.quantity
+                    quantity : null,
+                    machineid : null
                 }).then(function (response) {
                     console.log('on getJobUpdate');
                     console.log(response.data);

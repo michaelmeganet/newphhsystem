@@ -5,9 +5,8 @@ include_once("includes/variables.inc.php");
 //require_once("include/session.php");
 //include_once("include/admin_check.php");
 include_once("includes/input_modechange.php");
-#session_start();
 
-//cProductionJoblist('bandsawcutend');
+session_start();
 
 if (isset($_GET['jlstaffid'])) {
     $jlstaffid = $_GET['jlstaffid'];
@@ -15,6 +14,8 @@ if (isset($_GET['jlstaffid'])) {
 if (isset($_GET['jljobcode'])) {
     $jljobcode = $_GET['jljobcode'];
 }
+//cProductionJoblist('precisiongrindingend');
+
 $aid = 19;
 
 $sqladmin = "SELECT * FROM admin WHERE aid = $aid";
@@ -30,9 +31,9 @@ $branch = $rowadmin['branch'];
 <input type="hidden" id="input_mode" value="<?php echo $getPage; ?>" />
 <table width="100%" cellspacing="0" cellpadding="2" border="0">
     <tr>
-        <td width="49%" valign="top">PRODUCTION JOBLIST - MANUAL CUT END - <b><?php echo $pageMode; ?></b></td>
+        <td width="49%" valign="top">PRODUCTION JOBLIST - PRECISION GRINDING END- <b><?php echo $pageMode; ?></b></td>
         <td width="2%">&nbsp;</td>
-        <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - MANUAL CUT END  - <b><?php echo $pageMode; ?></b> မွျဖတ္ေတာက္မႈစတင္ျခင္း</td>
+        <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - PRECISION GRINDING- <b><?php echo $pageMode; ?></b> စားျခင္းစတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
     </tr>
     <tr>
         <td><button onclick="window.location.href = '<?php echo $link; ?>'">Change Mode (current :<?php echo $pageMode; ?>)</button>
@@ -44,35 +45,36 @@ $branch = $rowadmin['branch'];
 <table width="100%" cellspacing="0" cellpadding="2" border="0">
     <tr>
         <td>
-            <form name="manualcutend" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
+            <form name="precisiongrindingend" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
                 <input type="hidden" name="bid" id="bid" value="<?php echo $branch; ?>" />
 
                 <table width="100%" cellspacing="0" cellpadding="2" border="0">
-                    <td width="49%" valign="top">Scan the <strong style="color:#00FF00">Joblist Barcode Job No</strong> or <strong style="color:#00FF00">Enter the Job No manually</strong> to begin the Manual Cut Joblist.<br />
-                        Manual entry should begin with <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
+                    <tr> 
+                        <td width="49%" valign="top">Scan the <strong style="color:#00FF00">Joblist Barcode Job No</strong> or <strong style="color:#00FF00">Enter the Job No manually</strong> to begin/end the Precision Grinding Joblist.<br />
+                            Manual entry should begin with <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
 
-                        AA = Branch<br />
-                        BBB = Company Code<br />
-                        CC = Year of Quotation Issued<br />
-                        DD = Month of Quotation Issued<br />
-                        EEEE = Running Number<br />
-                        FF = Item Number<br />
-                        GGG = (R) Replacement or (A) Amendment if any<br />
-                        HH = Year of Completion Date<br />
-                        II = Month of Completion Date</td>
-                    <td width="2%">&nbsp;</td>
-                    <td width="49%" class="mmfont" valign="top">Manual Cut မစားမွီစာရင္းသြင္းရန္ႏွင့္စားျပီးစာရင္းသြင္းရန္ <strong style="color:#00FF00">အလုပ္စာရင္းအား scan ဖတ္ပါ</strong> (သို႔မဟုတ္) <strong style="color:#00FF00">အလုပ္နံပါတ္အား ရိုက္ထည့္ပါ။</strong><br />
-                        ကိုယ္တိုင္ရိုက္ထည့္ရန္ပံုစံမွာ <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
+                            AA = Branch<br />
+                            BBB = Company Code<br />
+                            CC = Year of Quotation Issued<br />
+                            DD = Month of Quotation Issued<br />
+                            EEEE = Running Number<br />
+                            FF = Item Number<br />
+                            GGG = (R) Replacement or (A) Amendment if any<br />
+                            HH = Year of Completion Date<br />
+                            II = Month of Completion Date</td>
+                        <td width="2%">&nbsp;</td>
+                        <td width="49%" class="mmfont" valign="top">Precision Grinding မစားမွီစာရင္းသြင္းရန္ႏွင့္စားျပီးစာရင္းသြင္းရန္ <strong style="color:#00FF00">အလုပ္စာရင္းအား scan ဖတ္ပါ</strong> (သို႔မဟုတ္) <strong style="color:#00FF00">အလုပ္နံပါတ္အား ရိုက္ထည့္ပါ။</strong><br />    
+                            ကိုယ္တိုင္ရိုက္ထည့္ရန္ပံုစံမွာ <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
 
-                        AA = စက္ရံုခြဲ<br />
-                        BBB = ကုမၼဏီသေကၤတ<br />
-                        CC = တန္ဖိုးသတ္မွတ္လိုက္ေသာႏွစ္<br />
-                        DD = တန္ဖိုးသတ္မွတ္လိုက္ေသာလ<br />
-                        EEEE = ကုန္မွာလႊာအမွတ္စဥ္<br />
-                        FF = ကုန္ပစၥည္းအမွတ္စဥ္<br />
-                        GGG = အစားထိုးျခင္း (သို႔မဟုတ္) ျပန္လည္ျပဳျပင္ျခင္း<br />
-                        HH = ကုန္ပစၥည္းျပီးစီးသည့္ႏွစ္<br />
-                        II = ကုန္ပစၥည္းျပီးစီးသည့္လ</td>
+                            AA = စက္ရံုခြဲ<br />
+                            BBB = ကုမၼဏီသေကၤတ<br />
+                            CC = တန္ဖိုးသတ္မွတ္လိုက္ေသာႏွစ္<br />
+                            DD = တန္ဖိုးသတ္မွတ္လိုက္ေသာလ<br />
+                            EEEE = ကုန္မွာလႊာအမွတ္စဥ္<br />
+                            FF = ကုန္ပစၥည္းအမွတ္စဥ္<br />
+                            GGG = အစားထိုးျခင္း (သို႔မဟုတ္) ျပန္လည္ျပဳျပင္ျခင္း<br />
+                            HH = ကုန္ပစၥည္းျပီးစီးသည့္ႏွစ္<br />
+                            II = ကုန္ပစၥည္းျပီးစီးသည့္လ</td>
                     </tr>
                     <tr>
                         <td colspan="3">&nbsp;</td>
@@ -110,17 +112,17 @@ $branch = $rowadmin['branch'];
                                     <td colspan="2">&nbsp;</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2"><div id="manualcutend_data" v-html='quantity_response'>{{quantity_response}}</div></td>
+                                    <td colspan="2"><div id="precisiongrindingend_data" v-html='quantity_response'>{{quantity_response}}</div></td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffIDEnd(0); getManualCutEnd(0); document.forms['manualcutend'].elements['staffid'].focus()" /></td>
+                        <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffIDEnd(0); getPrecisionGrindingEnd(0); document.forms['precisiongrindingend'].elements['staffid'].focus()" /></td>
                     </tr>
                     <tr>
                         <td>
-                            <input type='hidden' value='manual' id='proc' name='proc'/>
+                            <input type='hidden' value='precisiongrinding' id='proc' name='proc'/>
                         </td>
                     </tr>
                 </table>
@@ -129,4 +131,4 @@ $branch = $rowadmin['branch'];
     </tr>
 </table>
 </div>
-<script src='productionjoblist/scan_EndProc.js'></script>
+<script src='scan-barcode/scan_EndProc.js'></script>

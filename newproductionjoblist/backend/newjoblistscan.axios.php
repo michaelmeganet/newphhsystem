@@ -33,7 +33,7 @@ function get_MachineByID($machineid) {
 }
 
 function parseJobcode($jobcode) {
-    $jc_length = strlen($jobcode);
+    $jclength = strlen($jobcode);
     #echo "jc_length = $jc_length.\n";
     #echo "strpos [ = " . strpos($jobcode, '[') . '\n';
     if (strpos($jobcode, '[') === 0) {
@@ -100,22 +100,26 @@ switch ($action) {
                 $schDetail = get_SchedulingDetails($prev_period, $jobcode);
                 if ($schDetail == 'empty') {
                     throw new Exception('Cannot Find Data for Jobcode = ' . $jobcode . " on period = $this_period and $prev_period", 101);
+                }else{
+                    $period = $prev_period;
                 }
+            }else{
+                $period = $this_period;
             }
             $sid = $schDetail['sid'];
             $pmid = $schDetail['process'];
             $schDetail['processname'] = get_processName($pmid);
-            $outDetail = get_OutputDetails($this_period, $sid);
-            if ($outDetail == 'empty') {
-                $outDetail = get_OutputDetails($prev_period, $sid);
-            }
-
             $cuttingtype = $schDetail['cuttingtype'];
             $totalquantity = $schDetail['quantity'];
             $processcode = $schDetail['process'];
+            
+            $outDetail = get_OutputDetails($period, $sid);
+            
             $objJW = new JOB_WORK_DETAIL($jobcode, $cuttingtype, $processcode, $totalquantity, $outDetail);
             $jobworkDetail = $objJW->get_arr_jobWork();
             $jobworkStatus = $objJW->get_ex_jobwork();
+            #var_dump($jobworkDetail);
+            #var_dump($jobworkStatus);
             unset($jobworkStatus['jlwsid']);
             unset($jobworkStatus['jobcode']);
             $resp = array('status' => 'ok', 'schDetail' => $schDetail, 'outDetail' => $outDetail, 'jobworkStatus' => $jobworkStatus, 'jobworkDetail' => $jobworkDetail);
@@ -197,8 +201,10 @@ switch ($action) {
         $staffid = $received_data->staffid;         //staffid
         $jobdoneqty = ($received_data->quantity) ? $received_data->quantity : null;
         $machineid = ($received_data->machineid) ? $received_data->machineid : null;     //machineid
-        $machineDtl = get_MachineByID($machineid);
-        $mcid = $machineDtl['mcid'];
+        if ($machineid != null) {
+            $machineDtl = get_MachineByID($machineid);
+            $mcid = $machineDtl['mcid'];
+        }
         //parse jobcode
         try {
             $parseJobCode = parseJobcode($jobcode);
@@ -251,8 +257,8 @@ switch ($action) {
                 $objSQLpro = new SQL($sqlpro);
                 $resultpro = $objSQLpro->getResultOneRowArray();
                 if (empty($resultpro)) {
-                    throw new Exception("<span style='color:red'>Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>. "
-                    . "\nAre you scanning an old Job?"
+                    throw new Exception("<span style='color:red'>Cannot Process,Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>. "
+                    . "\nJobcode from from 2 month ago cannot be scanned anymore."
                     . "\nIf you believe this is an error, please contact Administrator.</span>", 101);
                 }
             }

@@ -404,7 +404,7 @@ switch ($action) {
         $sid = $received_data->sid;
         #echo "sid = $sid\n";
         $outputDetail = get_array_output($sid, $period);
-        if (!empty($outputDetail)) {
+        if ($outputDetail != 'empty') {
             foreach ($outputDetail as $data_key => $data_row) {
                 //convert start_by into name
                 $start_by = get_staff_name($data_row['start_by']);
@@ -424,7 +424,7 @@ switch ($action) {
     case 'getJobWorkDetail':
         $period = $received_data->period;
         $jobcode = $received_data->jobcode;
-        $staffid = $received_data->staffid;
+        #$staffid = $received_data->staffid;
 
         //begin parsing the jobcode;
         //jobcode format is AA BBB CCDD EEEE FF; Length is 19, Min 0, Max 18

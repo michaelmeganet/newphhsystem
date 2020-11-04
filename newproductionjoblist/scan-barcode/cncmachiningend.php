@@ -8,14 +8,14 @@ include_once("includes/input_modechange.php");
 
 #session_start();
 
+//cProductionJoblist('cncmachiningend');
+
 if (isset($_GET['jlstaffid'])) {
     $jlstaffid = $_GET['jlstaffid'];
 }
 if (isset($_GET['jljobcode'])) {
     $jljobcode = $_GET['jljobcode'];
 }
-//cProductionJoblist('millingstart');
-
 $aid = 19;
 
 $sqladmin = "SELECT * FROM admin WHERE aid = $aid";
@@ -31,9 +31,9 @@ $branch = $rowadmin['branch'];
 <input type="hidden" id="input_mode" value="<?php echo $getPage; ?>" />
 <table width="100%" cellspacing="0" cellpadding="2" border="0">
     <tr>
-        <td width="49%" valign="top">PRODUCTION JOBLIST - MILLING THICKNESS START - <b><?php echo $pageMode; ?></b></td>
+        <td width="49%" valign="top">PRODUCTION JOBLIST - CNC MACHINING END - <b><?php echo $pageMode; ?></b></td>
         <td width="2%">&nbsp;</td>
-        <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - MILLING - <b><?php echo $pageMode; ?></b> စားျခင္းစတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
+        <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - CNC MACHINING - <b><?php echo $pageMode; ?></b> စက္စတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
     </tr>
     <tr>
         <td><button onclick="window.location.href = '<?php echo $link; ?>'">Change Mode (current :<?php echo $pageMode; ?>)</button>
@@ -45,12 +45,12 @@ $branch = $rowadmin['branch'];
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
         <tr>
             <td>
-                <form name="millingstart" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
+                <form name="cncmachiningend" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
                     <input type="hidden" name="bid" id="bid" value="<?php echo $branch; ?>" />
 
                     <table width="100%" cellspacing="0" cellpadding="2" border="0">
                         <tr> 
-                            <td width="49%" valign="top">Scan the <strong style="color:#00FF00">Joblist Barcode Job No</strong> or <strong style="color:#00FF00">Enter the Job No manually</strong> to begin/end the Milling Joblist.<br />
+                            <td width="49%" valign="top">Scan the <strong style="color:#00FF00">Joblist Barcode Job No</strong> or <strong style="color:#00FF00">Enter the Job No manually</strong> to begin/end the CNC Machining Joblist.<br />
                                 Manual entry should begin with <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
 
                                 AA = Branch<br />
@@ -63,7 +63,7 @@ $branch = $rowadmin['branch'];
                                 HH = Year of Completion Date<br />
                                 II = Month of Completion Date</td>
                             <td width="2%">&nbsp;</td>
-                            <td width="49%" class="mmfont" valign="top">Milling မစားမွီစာရင္းသြင္းရန္ႏွင့္စားျပီးစာရင္းသြင္းရန္ <strong style="color:#00FF00">အလုပ္စာရင္းအား scan ဖတ္ပါ</strong> (သို႔မဟုတ္) <strong style="color:#00FF00">အလုပ္နံပါတ္အား ရိုက္ထည့္ပါ။</strong><br />    
+                            <td width="49%" class="mmfont" valign="top">CNC Machining မစားမွီစာရင္းသြင္းရန္ႏွင့္စားျပီးစာရင္းသြင္းရန္ <strong style="color:#00FF00">အလုပ္စာရင္းအား scan ဖတ္ပါ</strong> (သို႔မဟုတ္) <strong style="color:#00FF00">အလုပ္နံပါတ္အား ရိုက္ထည့္ပါ။</strong><br />    
                                 ကိုယ္တိုင္ရိုက္ထည့္ရန္ပံုစံမွာ <strong><font color="#00FFFF">AA BBB CCDD EEEE FF GGG HHII</font></strong>.<br /><br />
 
                                 AA = စက္ရံုခြဲ<br />
@@ -97,52 +97,40 @@ $branch = $rowadmin['branch'];
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Machine ID</td>
-                                        <td>: <input type="text" v-model='machineid' name="machineid" id="machineid" maxlength="5" style="width:200px"
-                                                     v-on:keyup.enter='getMachineName()'/></td>
+                                        <td>Job No / <font class="mmfont">အလုပ္အမွတ္စဥ္</font></td>
+                                        <td>: <input v-model='jobcode' type="text" name="jobno" id="jobno" maxlength="80" style="width:200px" 
+                                                     v-on:keyup.enter='getParseJobCode();getJobUpdate()' value='<?php echo (isset($jljobcode)) ? $jljobcode : ''; ?>' /></td>
+
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td><!-- Show Machine Name here, or show Error if nothing found -->
-                                            <div id="machineid_data" v-if='machine_response.indexOf("Cannot") >= 0'><span style="color:red">{{machine_response}}</span></div>
-                                            <div id="machineid_data" v-else><span style="color:yellow">{{machine_response}}</span></div>
+                                        <td> <!-- Show Staff Name here, or show Error if nothing found -->
+                                            <div id="jobno_data"><span style="color:red" v-html='jobcode_response'>{{jobcode_response}}</span></div>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Quantity</td>
-                                        <td>: <input type="text" v-model='quantity' name="quantity" id="quantity" maxlength="5" style="width:200px"
-                                                     v-on:keyup.enter='jobnoFocus()'/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Job No / <font class="mmfont">အလုပ္အမွတ္စဥ္</font></td>
-                                        <td>: <input type="text" v-model="jobcode" name="jobno" id="jobno" maxlength="100" style="width:200px" 
-                                                     v-on:keyup.enter='getJobUpdate()' value='<?php echo (isset($jljobcode)) ? $jljobcode : ''; ?>' /></td>
-
                                     </tr>
                                     <tr>
                                         <td colspan="2">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2"><div id="millingstart_data" v-html='jobcode_response'>{{jobcode_response}}<!-- Show Bandsaw Cut Start result here, or show Error if can't be started --></div></td>
+                                        <td colspan="2"><div id="cncmachiningend_data" v-html='quantity_response'>{{quantity_response}}</div></td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffID(0);
-                                getMachineID(0);
-                                getMillingStart(0);
-                                document.forms['millingstart'].elements['staffid'].focus()" /></td>
+                            <td colspan="2"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffIDEnd(0);
+                                getCNCMachiningEnd(0);
+                                document.forms['cncmachiningend'].elements['staffid'].focus()" /></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <input type='hidden' value='milling' id='proc' name='proc'/>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <input type='hidden' value='cncmachining' id='proc' name='proc'/>
+                        </td>
+                    </tr>
                     </table>
                 </form>
             </td>
         </tr>
     </table>
 </div>
-<script src='productionjoblist/scan_StartProc.js'></script>
+<script src='scan-barcode/scan_EndProc.js'></script>
