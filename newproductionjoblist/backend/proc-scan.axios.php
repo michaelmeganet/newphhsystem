@@ -113,8 +113,10 @@ switch ($action) {
         $staffid = $received_data->staffid;         //staffid
         $jobdoneqty = ($received_data->quantity) ? $received_data->quantity : null;
         $machineid = ($received_data->machineid) ? $received_data->machineid : null;     //machineid
-        $machineDtl = get_MachineByID($machineid);
-        $mcid = $machineDtl['mcid'];
+        if ($machineid != null) {
+            $machineDtl = get_MachineByID($machineid);
+            $mcid = $machineDtl['mcid'];
+        }
         //parse jobcode
         try {
             $parseJobCode = parseJobcode($jobcode);
@@ -175,7 +177,6 @@ switch ($action) {
             $totalqty = $resultpro['quantity'];
             $sid = $resultpro['sid'];
             #echo "sid = $sid";
-
             //check if this process needed or not
             $objJW = new JOB_WORK_DETAIL($parseJobCode, $resultpro['cuttingtype'], $resultpro['process'], $totalqty);
             $JWDetails = $objJW->get_ex_jobwork();

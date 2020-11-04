@@ -8,14 +8,14 @@ include_once("includes/input_modechange.php");
 
 #session_start();
 
-//cProductionJoblist('millingwidthstart');
-
 if (isset($_GET['jlstaffid'])) {
     $jlstaffid = $_GET['jlstaffid'];
 }
 if (isset($_GET['jljobcode'])) {
     $jljobcode = $_GET['jljobcode'];
 }
+//cProductionJoblist('millingstart');
+
 $aid = 19;
 
 $sqladmin = "SELECT * FROM admin WHERE aid = $aid";
@@ -31,7 +31,7 @@ $branch = $rowadmin['branch'];
 <input type="hidden" id="input_mode" value="<?php echo $getPage; ?>" />
 <table width="100%" cellspacing="0" cellpadding="2" border="0">
     <tr>
-        <td width="49%" valign="top">PRODUCTION JOBLIST - MILLING WIDTH START - <b><?php echo $pageMode; ?></b></td>
+        <td width="49%" valign="top">PRODUCTION JOBLIST - MILLING THICKNESS START - <b><?php echo $pageMode; ?></b></td>
         <td width="2%">&nbsp;</td>
         <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - MILLING - <b><?php echo $pageMode; ?></b> စားျခင္းစတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
     </tr>
@@ -45,7 +45,7 @@ $branch = $rowadmin['branch'];
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
         <tr>
             <td>
-                <form name="millingwidthstart" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
+                <form name="millingstart" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
                     <input type="hidden" name="bid" id="bid" value="<?php echo $branch; ?>" />
 
                     <table width="100%" cellspacing="0" cellpadding="2" border="0">
@@ -123,7 +123,7 @@ $branch = $rowadmin['branch'];
                                         <td colspan="2">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2"><div id="millingwidthstart_data" v-html='jobcode_response'>{{jobcode_response}}<!-- Show Bandsaw Cut Start result here, or show Error if can't be started --></div></td>
+                                        <td colspan="2"><div id="millingstart_data" v-html='jobcode_response'>{{jobcode_response}}<!-- Show Bandsaw Cut Start result here, or show Error if can't be started --></div></td>
                                     </tr>
                                 </table>
                             </td>
@@ -131,12 +131,12 @@ $branch = $rowadmin['branch'];
                         <tr>
                             <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffID(0);
                                 getMachineID(0);
-                                getMillingWidthStart(0);
-                                document.forms['millingwidthstart'].elements['staffid'].focus()" /></td>
+                                getMillingStart(0);
+                                document.forms['millingstart'].elements['staffid'].focus()" /></td>
                         </tr>
                         <tr>
                             <td>
-                                <input type='hidden' value='millingwidth' id='proc' name='proc'/>
+                                <input type='hidden' value='milling' id='proc' name='proc'/>
                             </td>
                         </tr>
                     </table>
@@ -145,4 +145,4 @@ $branch = $rowadmin['branch'];
         </tr>
     </table>
 </div>
-<script src='productionjoblist/scan_StartProc.js'></script>
+<script src='scan-barcode/scan_StartProc.js'></script>

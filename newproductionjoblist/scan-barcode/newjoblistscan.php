@@ -571,5 +571,5 @@ $branch = $rowadmin['branch'];
     });
 </script>
 <!--
-<script src='productionjoblist/scan_StartProc.js'>
+<script src='scan-barcode/scan_StartProc.js'>
 </script>

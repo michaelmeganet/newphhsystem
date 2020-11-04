@@ -8,7 +8,7 @@ include_once("includes/input_modechange.php");
 
 #session_start();
 
-//cProductionJoblist('millingend');
+//cProductionJoblist('millinglengthend');
 
 if (isset($_GET['jlstaffid'])) {
     $jlstaffid = $_GET['jlstaffid'];
@@ -31,7 +31,7 @@ $branch = $rowadmin['branch'];
 <input type="hidden" id="input_mode" value="<?php echo $getPage; ?>" />
 <table width="100%" cellspacing="0" cellpadding="2" border="0">
     <tr>
-        <td width="49%" valign="top">PRODUCTION JOBLIST - MILLING THICKNESS END - <b><?php echo $pageMode; ?></b></td>
+        <td width="49%" valign="top">PRODUCTION JOBLIST - MILLING LENGTH END - <b><?php echo $pageMode; ?></b></td>
         <td width="2%">&nbsp;</td>
         <td width="49%" class="mmfont" valign="top">ကုန္ထုတ္လုပ္မႈအလုပ္စာရင္း - MILLING - <b><?php echo $pageMode; ?></b> စားျခင္းစတင္ျခင္း/အဆံုးသတ္ျခင္း</td>
     </tr>
@@ -45,7 +45,7 @@ $branch = $rowadmin['branch'];
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
         <tr>
             <td>
-                <form name="millingend" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
+                <form name="millinglengthend" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']; ?>" onSubmit="return jobliststart_validator(this)" method="post">
                     <input type="hidden" name="bid" id="bid" value="<?php echo $branch; ?>" />
 
                     <table width="100%" cellspacing="0" cellpadding="2" border="0">
@@ -112,17 +112,17 @@ $branch = $rowadmin['branch'];
                                         <td colspan="2">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2"><div id="millingend_data" v-html='quantity_response'>{{quantity_response}}</div></td>
+                                        <td colspan="2"><div id="millinglengthend_data" v-html='quantity_response'>{{quantity_response}}</div></td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffIDEnd(0); getMillingEnd(0); document.forms['millingend'].elements['staffid'].focus()" /></td>
+                            <td colspan="3"><input type="reset" name="clear" id="clear" value="Clear" onclick="getStaffIDEnd(0); getMillingLengthEnd(0); document.forms['millinglengthend'].elements['staffid'].focus()" /></td>
                         </tr>
                         <tr>
                             <td>
-                                <input type='hidden' value='milling' id='proc' name='proc'/>
+                                <input type='hidden' value='millinglength' id='proc' name='proc'/>
                             </td>
                         </tr>
                     </table>
@@ -131,4 +131,4 @@ $branch = $rowadmin['branch'];
         </tr>
     </table>
 </div>
-<script src='productionjoblist/scan_EndProc.js'></script>
+<script src='scan-barcode/scan_EndProc.js'></script>
