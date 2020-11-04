@@ -674,3 +674,66 @@ Class DateDayMonthYear {
     }
 
 }
+
+Class GenerateDateArray {
+
+    protected $dt;
+    protected $yearNow;
+    protected $startYear;
+
+    function __construct() {
+        $dt = new DateTime();
+        $this->dt = $dt;
+        $this->yearNow = date_format($dt, 'Y');
+        $this->startYear = 2001;
+    }
+
+    public function generateYearArray() {
+        $startYear = $this->startYear;
+        $yearNow = $this->yearNow;
+        $yearArr = array();
+        for ($year = $yearNow; $year >= $startYear; $year--) {
+            $yearArr[] = $year;
+        }
+        return $yearArr;
+    }
+
+    public function generateMonthArray($year) {
+        $dt = $this->dt;
+        $yearNow = $this->yearNow;
+        $monthNow = date_format($dt, 'm');
+        $monthArr = array();
+        if ($year == $yearNow) {
+            for ($month = $monthNow; $month >= 1; $month--) {
+                $monthArr[] = sprintf('%02d',$month);
+            }
+        } else {
+            for ($month = 12; $month >= 1; $month--) {
+                $monthArr[] = sprintf('%02d',$month);
+            }
+        }
+        return $monthArr;
+    }
+
+    public function generateDayArray($year, $month) {
+        $dt = $this->dt;
+        $yearNow = $this->yearNow;
+        $monthNow = date_format($dt, 'm');
+        $dayNow = date_format($dt, 'd');
+        $dayArr = array();
+        if ($year == $yearNow && $month == $monthNow) {
+            for ($day = 1; $day <= $dayNow; $day++) {
+                $dayArr[] = $day;
+            }
+        } else {
+            $date = date_create("$year-$month-01");
+            #echo "date = $date";
+            $totalDate = date_format($date, 't');
+            for ($day = 1; $day <= $totalDate; $day++) {
+                $dayArr[] = $day;
+            }
+        }
+        return $dayArr;
+    }
+
+}

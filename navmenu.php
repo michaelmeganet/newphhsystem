@@ -31,6 +31,7 @@
                                         <li><a class="dropdown-item" href='index-kpi.php?view=mss'>Monthly Summary (Simple)</a></li>
                                         <div class='dropdown-divider'></div>
                                         <li><a class="dropdown-item" href='index-kpi.php?view=ssd'>Detail Summary by Staff</a></li>
+                                        <li><a class="dropdown-item" href='index-kpi.php?view=sid'>Detail Summary by Staff (Interval)</a></li>
                                         <li><a class="dropdown-item" href='index-kpi.php?view=msd'>Detail Summary by Machine</a></li>
                                         <li><a class="dropdown-item" href='index-kpi.php?view=usd'>Detail Estimated Summary by Unfinished Jobs</a></li>
                                     </ul>

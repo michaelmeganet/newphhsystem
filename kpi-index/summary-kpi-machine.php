@@ -95,7 +95,25 @@ and open the template in the editor.
                             <table>
                                 <tr>
                                     <td colspan="2" style="width:auto;"><b>
-                                            Total Value Gain (RM) : {{toFixed(data.totalkpi,7)}}
+                                            Total Normal Shift Rate (RM) : {{toFixed(data.kpi_normal,2)}}
+                                        </b>
+                                    </td>
+                                    <td colspan="2" style="width:auto;">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="width:auto;"><b>
+                                            Total Overtime Shift Rate (RM) : {{toFixed(data.kpi_overtime,2)}}
+                                        </b>
+                                    </td>
+                                    <td colspan="2" style="width:auto;">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="width:auto;"><b>
+                                            Total Value Gain (RM) : {{toFixed(data.totalkpi,2)}}
                                         </b>
                                     </td>
                                     <td colspan="2" style="width:auto;">

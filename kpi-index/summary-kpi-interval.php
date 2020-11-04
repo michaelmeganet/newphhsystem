@@ -14,30 +14,68 @@ and open the template in the editor.
     <body>
         <div id='mainArea'>
             <form action='' method='POST'>
-                <div> <!--period area-->
-                    Period :
-                    <select v-model='period' id='period' name='period' @change="summType=''">
-                        <option v-for='data in periodList' v-bind:value='data'>{{data}}</option>
-                    </select>
-                </div>
-                <div v-if='period!= ""'><!--summary monthly/daily area-->
-                    Summary Type :
-                    <select v-model='summType' id='summType' name='summType' @change='day = ""'>
-                        <option value='all'>Monthly</option>
-                        <option value='daily'>Daily</option>
-                    </select>
-                </div>
-                <div v-if='summType == "daily"'><!-- date selection -->
-                    Day :
-                    <select v-model="day" id="day" name="day">
-                        <option v-for="data in dayList" v-bind:value="data">{{data}}</option>
-                    </select>
-                    <button type="button" @click="getDetailedKPIStaff" >Submit</button>
-                </div>
-                <div v-else-if='summType != "daily" && summType!=""'>
-                    Day :
-                    <input type='text' id='day' name='day' value='Show All' readonly/>
-                    <button type="button" @click="getDetailedKPIStaff" >Submit</button>
+                <div class="container">
+                    <div class='row'>
+                        <div class='col-md-4'>
+                            <div class='row'>
+                                <div class='col-md'>
+                                    Start Date:
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-4'>
+                                    Period:<br>
+                                    <select v-model='periodStart' id ='periodStart' name='periodStart' @change='parsePeriod(periodStart,"start")'>
+                                        <option v-for='data in periodList' v-bind:value='data'>{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4'>
+                                    Day:<br>
+                                    <select v-model='dayStart' id='dayStart' name='dayStart' @change="endShow = true">
+                                        <option v-for="data in daySList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md' v-show="dayStart != '' && periodStart != ''">
+                                    Selected<br>
+                                    <font style='color:yellow'>{{dayStart}}/{{periodStart.substr(2,2)}}/20{{periodStart.substr(0,2)}}</font>
+                                </div>
+                            </div>
+                            <div class="row">
+                                &nbsp;
+                            </div>
+                            <div class='row' v-if='endShow'>
+                                <div class='col-md'>
+                                    End Date:
+                                </div>
+                            </div>
+                            <div class='row'  v-if='endShow'>
+                                <div class='col-md-4'>
+                                    Period:<br>
+                                    <select v-model='periodEnd' id ='periodEnd' name='periodEnd' @change='parsePeriod(periodEnd,"end")'>
+                                        <option v-for='data in periodEList' v-bind:value='data'>{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4'>
+                                    Day:<br>
+                                    <select v-model='dayEnd' id='dayEnd' name='dayEnd' @change="parseDateInterval()">
+                                        <option v-for="data in dayEList" v-bind:value="data">{{data}}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md' v-show="dayEnd != '' && periodEnd != ''">
+                                    Selected<br>
+                                    <font style='color:yellow'>{{dayEnd}}/{{periodEnd.substr(2,2)}}/20{{periodEnd.substr(0,2)}}</font>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <font style='color:red'>{{period_response}}</font>
+                    </div>
+                    <div class='row' v-show='allowSubmit'>
+                        <div class='col-md-4'>
+                            <button class='btn btn-primary btn-block' type='button' @click='currIndex = 0;getDetailedKPIStaff()'>Submit</button>
+                        </div>
+                    </div>
                 </div>
             </form>
             <br>
@@ -53,10 +91,11 @@ and open the template in the editor.
                     <div v-if="detKPI != '' && status == 'ok'">
                         <div style='text-align:center'>
                             <b style='font-size:2em'>KPI INDEX DAILY DETAILS REPORT</b><br>
-                            <b style='font-size:1.5em'>DATE = <span v-if='summType == "daily"'>{{day}}-</span>{{month}}-{{year}}</b><br>
-                        </div>
-                        <div v-for='(datashift,date) in detKPI'>
-                            <template v-for="(data,shift) in datashift">
+                            <b style='font-size:1.5em'>PERIOD OF {{dayStart}}/{{monthStart}}/{{yearStart}} - {{dayEnd}}/{{monthEnd}}/{{yearEnd}}</b><br>
+                        </DIV>
+
+                        <div v-for='(shiftdata,date) in detKPI'>
+                            <template v-for='(data,shift) in shiftdata'>
                                 <div style='text-align:center'>
                                     <font style='font-size:1.2em;text-align:center;background-color:#406094'>Datalist of {{date}} - {{shift}}</font><br>
                                 </div>
@@ -86,12 +125,8 @@ and open the template in the editor.
                                                 </th>
                                             </tr>
                                             <tr>
-                                                <td colspan="10" style="text-align:right"><b>Sum of Unit Weight :</b></td>
-                                                <td><b>{{sum_unit_weight(datarow.details)}}</b></td>
-                                            </tr>
-                                            <tr>
                                                 <td colspan="11" style="text-align:right"><b>Sum of Total Weight :</b></td>
-                                                <td><b>{{sum_total_weight(datarow.details)}}</b></td>
+                                                <td><b>{{sum_total_weight(datarow.details).toFixed(2)}}</b></td>
                                             </tr>
                                             <!--
                                             <tr>
@@ -132,7 +167,7 @@ and open the template in the editor.
                                                     </tr>
                                                     <tr>
                                                         <td colspan="6">Value Gain by KPI = KPI x Rate = &nbsp;
-                                                            {{kpiValue(sum_total_weight(datarow.details),datarow.machine_capacity_per_shift,'normal').toFixed(2)}} x {{datarow.rm_rate}}
+                                                        {{kpiValue(sum_total_weight(datarow.details),datarow.machine_capacity_per_shift,'normal').toFixed(2)}} x {{datarow.rm_rate}}
                                                             = {{datarow.totalkpi}} (Calculated)</td>
                                                     </tr>
                                                     <tr>
@@ -161,7 +196,7 @@ and open the template in the editor.
                                                     </tr>
                                                     <tr>
                                                         <td colspan="6">Value Gain by KPI = KPI x Rate = &nbsp;
-                                                            {{kpiValue(sum_total_weight(datarow.details),datarow.machine_capacity_per_shift,'overtime').toFixed(2)}} x {{datarow.rm_rate}}
+                                                        {{kpiValue(sum_total_weight(datarow.details),datarow.machine_capacity_per_shift,'overtime').toFixed(2)}} x {{datarow.rm_rate}}
                                                             = {{datarow.totalkpi}} (Calculated)
                                                         </td>
                                                     </tr>
@@ -180,15 +215,37 @@ and open the template in the editor.
                                         </tr>
                                     </table>
                                 </template>
+                                <div>
+                                    <hr style='border-top: 1px dashed blue'>
+                                </div>
                             </template>
                             <div>
-                                <hr>
+                                <hr style='border: 1px solid blue'>
+                            </div>
+                        </div>
+                        <div>
+                            Loaded {{currIndex+1}} of {{indexLimit+1}} set of datas.
+                        </div>
+                        <div v-if="subloading">
+                            loading...
+                        </div>
+                        <div v-else-if="!subloading">
+                            <div v-if='currIndex >= 0 && currIndex < indexLimit'>
+                                <button type='button' @click='currIndex++;getDetailedKPIStaff(currIndex)'>Click to Load More</button>
+                            </div>
+                            <div v-else-if='currIndex > 0 && currIndex == indexLimit'>
+                                <b> All data has been loaded </b>
+                            </div>
+                            <div v-else-if='currIndex == 0 && currIndex == indexLimit'>
+                                <b> All data has been loaded </b>
+
                             </div>
                         </div>
                     </div>
                     <div v-else-if="status == 'error'">
                         {{errmsg}}
                     </div>
+
 
                 </div>
                 <?php
@@ -303,28 +360,43 @@ var sumKPIVue = new Vue({
     el: '#mainArea',
     data: {
         phpajaxresponsefile: './kpi-index/summarykpi.axios.php',
-        period: '',
+        endShow: false,
+        allowSubmit: false,
+        period_response: '',
+        periodStart: '',
+        periodEnd: '',
         summType: '',
         day: '',
         loading: false,
+        subloading: false,
         status: '',
         errmsg: '',
-        shift: 'shift1',
+        currIndex: 0,
+        indexLimit: '',
+        yearStart: '',
+        yearEnd: '',
+        monthStart: '',
+        monthEnd: '',
+        dayStart: '',
+        dayEnd: '',
+        daySList: '',
+        dayEList: '',
 
         periodList: '',
         dayList: '',
         kpiList: '',
-        detKPI: ''
+        detKPI: '',
+
     },
     computed: {
-        year: function () {
-            if (this.period !== '') {
-                return '20' + this.period.substring(0, 2);
-            }
-        },
-        month: function () {
-            if (this.period !== '') {
-                return this.period.substring(2, 4);
+        periodEList: function(){
+            if (this.periodStart != ''){
+                perStart = parseInt(this.periodStart);
+                data = {
+                    0: perStart.toString(),
+                    1: (perStart +1).toString()
+                };
+                return data;
             }
         }
     },
@@ -340,6 +412,16 @@ var sumKPIVue = new Vue({
                 this.errmsg = this.detKPI.msg;
             } else {
                 this.status = 'ok';
+            }
+        },
+        periodStart: function () {
+            if (this.periodStart != '') {
+                this.getDay(this.yearStart, this.monthStart, 'start');
+            }
+        },
+        periodEnd: function () {
+            if (this.periodEnd != '') {
+                this.getDay(this.yearEnd, this.monthEnd, 'end');
             }
         }
     },
@@ -357,6 +439,44 @@ var sumKPIVue = new Vue({
         toFixed: function (str, decimal) {
             return str.toFixed(decimal);
         },
+        parseDateInterval: function () {
+            this.indexLimit = '';
+            this.allowSubmit = false;
+            if ((parseInt(this.yearEnd) - parseInt(this.yearStart)) < 0) {
+                //Year is weird, start exceeds end
+                this.period_response = 'End Date Period is not appropriate';
+                console.log('year is weird, check');
+            } else if ((parseInt(this.monthEnd) - parseInt(this.monthStart)) < 0) {
+                //month is weird, start exceeds end
+                this.period_response = 'End Date Period is not appropriate';
+                console.log('month is weird, check');
+            } else if (((parseInt(this.dayEnd) - parseInt(this.dayStart)) < 0) && ((parseInt(this.monthEnd) - parseInt(this.monthStart)) == 0)) {
+                //day is weird, start exceeds end
+                this.period_response = 'End Date Day is not appropriate';
+                console.log('day is weird, check');
+            } else {
+                dayLimit = 10;
+                this.allowSubmit = true;
+                this.period_response = '';
+                if (this.monthEnd == this.monthStart) { //same month, just do normal math
+                    console.log('same month');
+                    dayInterval = parseInt(this.dayEnd) - parseInt(this.dayStart);
+                    if (dayInterval == 0) {
+                        console.log('no interval');
+                        this.indexLimit = 0;
+                    } else {
+                        console.log('find interval');
+                        this.indexLimit = Math.floor((dayInterval + 1) / dayLimit) - 1;
+                    }
+                } else {
+                    daysOfMonth = new Date(this.yearStart, this.monthStart, 0).getDate();
+                    sInterval = parseInt(daysOfMonth) - parseInt(this.dayStart);
+                    eInterval = parseInt(this.dayEnd);
+                    dayInterval = sInterval + eInterval;
+                    this.indexLimit = Math.floor((dayInterval + 1) / dayLimit) - 1;
+                }
+            }
+        },
         getPeriod: function () {
             axios.post(this.phpajaxresponsefile, {
                 action: 'getPeriod'
@@ -364,6 +484,31 @@ var sumKPIVue = new Vue({
                 console.log('on getPeriod....');
                 console.log(response.data);
                 sumKPIVue.periodList = response.data;
+            });
+        },
+        parsePeriod: function (period, status) {
+            if (status == 'start') {
+                this.yearStart = '20' + period.substr(0, 2);
+                this.monthStart = period.substr(2, 2);
+            } else if (status == 'end') {
+                this.yearEnd = '20' + period.substr(0, 2);
+                this.monthEnd = period.substr(2, 2);
+            }
+
+        },
+        getDay: function (year, month, status) {
+            axios.post(this.phpajaxresponsefile, {
+                action: 'getDay',
+                year: year,
+                month: month
+            }).then(function (response) {
+                console.log('on getDay');
+                console.log(response.data);
+                if (status == 'start') {
+                    sumKPIVue.daySList = response.data;
+                } else if (status == 'end') {
+                    sumKPIVue.dayEList = response.data;
+                }
             });
         },
         getDayList: function () {
@@ -376,18 +521,45 @@ var sumKPIVue = new Vue({
                 sumKPIVue.dayList = response.data;
             });
         },
-        getDetailedKPIStaff: function () {
-            this.loading = true;
+        getDetailedKPIStaff: function (index = 0) {
+            if (this.dayStart.length == 1) {
+                day_start = '0' + this.dayStart;
+            } else {
+                day_start = this.dayStart;
+            }
+            if (this.dayEnd.length == 1) {
+                day_end = '0' + this.dayStart;
+            } else {
+                day_end = this.dayEnd;
+            }
+            date_start = this.yearStart + '-' + this.monthStart + '-' + day_start;
+            date_end = this.yearEnd + '-' + this.monthEnd + '-' + day_end;
+            if (index == 0) {
+                this.loading = true;
+            } else if (index != 0) {
+                this.subloading = true;
+            }
             axios.post(this.phpajaxresponsefile, {
-                action: 'getDetailedKPIStaff',
-                period: sumKPIVue.period,
-                summType: sumKPIVue.summType,
-                day: sumKPIVue.day
+                action: 'getDetailedKPIStaffInterval',
+                //period: sumKPIVue.period,
+                date_start: date_start,
+                date_end: date_end,
+                index: index,
+                indexLimit: sumKPIVue.indexLimit
             }).then(function (response) {
                 console.log('on getDetailedKPIStaff..');
                 console.log(response.data);
-                sumKPIVue.detKPI = response.data;
-                sumKPIVue.loading = false;
+                if (index == 0) {
+                    sumKPIVue.detKPI = response.data;
+                    sumKPIVue.loading = false;
+                } else if (index != 0) {
+                    //response.data.forEach(el => {
+                    //    console.log(el);
+                    //});
+                    sumKPIVue.detKPI = Object.assign(sumKPIVue.detKPI, response.data);
+                    //sumKPIVue.detKPI.concat(response.data);
+                    sumKPIVue.subloading = false;
+                }
             });
         },
         sum_total_weight: function (data) {
