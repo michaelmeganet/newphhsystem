@@ -208,11 +208,12 @@ switch ($action) {
                     } else {//if has not started/ended
                         $sqlpotr = "SELECT * FROM $pottab WHERE sid = $sid AND jobtype = '$proc' AND (date_end IS NOT NULL OR NOT date_end LIKE '') ORDER BY poid DESC LIMIT 0, 1";
                         $objSQLpotr = new SQL($sqlpotr);
-                        $potrResult = $objSQLpotr->getResultRowArray();
+                        $potrResult = $objSQLpotr->getResultOneRowArray();
+                        #echo "sql = $sqlpotr";
                         if (!empty($potrResult)) { //if there's already data previously
                             #echo "not empty<br>";
-                            $rem_qty = $potrResult['remainingquantity'];
-                            if ($rem_qty != 0) { //if previous ended process is not null
+                            $remainingqty = $potrResult['remainingquantity'];
+                            if ($remainingqty != 0) { //if previous ended process is not null
                                 #echo "reminingqty is not null, \n";
                                 #echo "still have qty to be done<br>";
                                 $remainingqty = $remainingqty - $jobdoneqty;
