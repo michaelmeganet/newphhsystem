@@ -263,7 +263,7 @@ Class JOB_WORK_DETAIL {
                 foreach ($data_row as $key => $val) {
 #echo $millingKey."\n";
                     $outputMilling = $this->search_in_output($key);
-                    $qty_done_milling = $this->get_total_quantity_done($jobtype);
+                    $qty_done_milling = $this->get_total_quantity_done($key);
                     $millingKey = ucwords($key);
                     if ($outputMilling != 'empty') {//if there's milling data
                         if ($outputMilling['date_end'] == ('' || null)) { //if not yet ended
@@ -286,7 +286,7 @@ Class JOB_WORK_DETAIL {
 
         if ($grindingtype != 'none') { //get the value for cuttingtype
             $outputGrinding = $this->search_in_output($grindingtype);
-            $qty_done_grinding = $this->get_total_quantity_done($jobtype);
+            $qty_done_grinding = $this->get_total_quantity_done($grindingtype);
             $grinding = ucwords($grindingtype);
             if ($outputGrinding != 'empty') { //if data is found
                 if ($outputGrinding['date_end'] == ('' || null)) { //if not yet ended
