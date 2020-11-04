@@ -404,7 +404,7 @@ switch ($action) {
         $sid = $received_data->sid;
         #echo "sid = $sid\n";
         $outputDetail = get_array_output($sid, $period);
-        if (!empty($outputDetail)) {
+        if ($outputDetail != 'empty') {
             foreach ($outputDetail as $data_key => $data_row) {
                 //convert start_by into name
                 $start_by = get_staff_name($data_row['start_by']);

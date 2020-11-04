@@ -118,6 +118,8 @@ switch ($action) {
             $objJW = new JOB_WORK_DETAIL($jobcode, $cuttingtype, $processcode, $totalquantity, $outDetail);
             $jobworkDetail = $objJW->get_arr_jobWork();
             $jobworkStatus = $objJW->get_ex_jobwork();
+            #var_dump($jobworkDetail);
+            #var_dump($jobworkStatus);
             unset($jobworkStatus['jlwsid']);
             unset($jobworkStatus['jobcode']);
             $resp = array('status' => 'ok', 'schDetail' => $schDetail, 'outDetail' => $outDetail, 'jobworkStatus' => $jobworkStatus, 'jobworkDetail' => $jobworkDetail);
