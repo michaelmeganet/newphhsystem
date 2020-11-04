@@ -169,8 +169,8 @@ switch ($action) {
                 $objSQLpro = new SQL($sqlpro);
                 $resultpro = $objSQLpro->getResultOneRowArray();
                 if (empty($resultpro)) {
-                    throw new Exception("<span style='color:red'>Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>. "
-                    . "\nAre you scanning an old Job?"
+                    throw new Exception("<span style='color:red'>Found Error while processing Job No = <b><font style='color:yellow'>$parseJobCode</font></b>.<br> "
+                    . "\nCannot find this jobno in <font style='color:yellow'>20".substr($this_period,0,2)."-".substr($this_period,2,2)."</font> and in <font style='color:yellow'>20".substr($last_period,0,2)."-".substr($last_period,2,2)."</font><br>"
                     . "\nIf you believe this is an error, please contact Administrator.</span>", 101);
                 }
             }
@@ -284,7 +284,7 @@ switch ($action) {
                         $poid = $rowpot['poid'];
                         #echo "poid = $poid\n";
                         $qrUpdate = "UPDATE $pottab
-	  			    SET date_end = '$currDateTime' , end_by = '$staffid' 
+                    SET date_end = '$currDateTime' , end_by = '$staffid' 
                                     WHERE poid = $poid AND sid = $sid AND jobtype = '$proc'";
                         $objSQLupd = new SQL($qrUpdate);
                         $updResult = $objSQLupd->getUpdate();
