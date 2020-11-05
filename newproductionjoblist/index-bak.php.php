@@ -12,31 +12,31 @@ switch ($view) {
 
     //logistic delivery
     case 'pkg':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "logisticdelivery/packingcompleteitem.php";
         $pageTitle = "Logistic Delivery - Packing/Complete Item";
         break;
 
     case 'dyo':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "logisticdelivery/deliveryout.php";
         $pageTitle = "Logistic Delivery - Delivery Out";
         break;
 
     case 'dyr':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "logisticdelivery/deliveryreturn.php";
         $pageTitle = "Logistic Delivery - Delivery Return";
         break;
 
     case 'sbj':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "logisticdelivery/searchbyjobno.php";
         $pageTitle = "Logistic Delivery - Search By Joblist No";
         break;
 
     case 'sbr':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "logisticdelivery/searchbyrunningno.php";
         $pageTitle = "Logistic Delivery - Search By Running No";
         break;
@@ -44,22 +44,22 @@ switch ($view) {
     //production joblist
 
     case 'jwc':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/searchjoblistbystaff.php";
         $pageTitle = "Production Joblist - Search Joblist Details By Staff";
         break;
     case 'jss':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/singlejobliststatus.php";
         $pageTitle = "Production Joblist - Search Joblist Details";
         break;
     case 'jsn':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/newjoblistscan.php";
         $pageTitle = "Production Joblist - NEW JOBLIST SCAN";
         break;
     case 'jte':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/joblistend.php";
         $pageTitle = "Production Joblist - Joblist End";
         break;
@@ -155,25 +155,25 @@ switch ($view) {
         break;
 
     case 'cfq':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/changefinishingquantity.php";
         $pageTitle = "Production Joblist - Change Finishing Quantity";
         break;
 
     case 'pbj':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/searchbyjobno.php";
         $pageTitle = "Production Joblist - Search By Joblist No";
         break;
 
     case 'pbr':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/searchbyrunningno.php";
         $pageTitle = "Production Joblist - Search By Running No";
         break;
 
     case 'psr':
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "productionjoblist/printsticker.php";
         $pageTitle = "Production Joblist - Print Sticker";
         break;
@@ -189,7 +189,7 @@ switch ($view) {
         break;
 
     default:
-        $urlmenu = "menu.php";
+        $urlmenu = "menu-bak.php";
         $url = "message.php";
         break;
 }

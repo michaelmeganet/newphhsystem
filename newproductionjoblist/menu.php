@@ -20,14 +20,14 @@ include_once ("includes/variables.inc.php");
         <td id="tdtitle">Logistic Delivery</td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><strike>Nothing here yet.</strike></td>
+        <td id="tdsubtitle"><a href='index-pj-ld.php' class='noline'>Go To Logistic Delivery Area</a></td>
     </tr>
     <!-- Production Joblist Area-->
     <tr>
         <td id="tdtitle">Production Joblist</td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><strike>Nothing here yet.</strike></td>
+        <td id="tdsubtitle"><a href='index-pj-pj.php' class='noline'>Go To Production Joblist Area</a></td>
     </tr>
     <!-- Scan Barcode Area-->
     <tr>
@@ -40,7 +40,7 @@ include_once ("includes/variables.inc.php");
         <td id="tdsubtitle"><hr></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=njs" class="noline"><strike>Go To New UI Scan Barcode<br>(Under Development)</strike></a></td>
+        <td id="tdsubtitle"><a href="index.php?view=njs" class="noline">Go To New UI Scan Barcode</a></td>
     </tr>
     <?php
     //end of Production Joblist
