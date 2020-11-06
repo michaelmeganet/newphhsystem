@@ -125,7 +125,7 @@ function get_scheduling_detail_by_jobcode($period, $branch, $co_code, $yearmonth
 }
 
 function get_array_machine($mcid) {
-    $qr = "SELECT name FROM machine2020 WHERE mcid = $mcid";
+    $qr = "SELECT name FROM machine WHERE mcid = $mcid";
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultOneRowArray();
     if (!empty($result)) {
@@ -408,14 +408,30 @@ switch ($action) {
             foreach ($outputDetail as $data_key => $data_row) {
                 //convert start_by into name
                 $start_by = get_staff_name($data_row['start_by']);
-                $data_row['start_by'] = $start_by;
+                #$data_row['start_by_name'] = $start_by;
                 //convert end_by into name
                 $end_by = get_staff_name($data_row['end_by']);
-                $data_row['end_by'] = $end_by;
+                #$data_row['end_by_name'] = $end_by;
                 //convert mcid into machine name
                 $mcname = get_array_machine($data_row['machine_id']);
-                $data_row['machine_id'] = $mcname;
-                $outputDetail[$data_key] = $data_row;
+                #$data_row['machine_name'] = $mcname;
+                $new_data_row = array (
+                    'poid' => $data_row['poid'],
+                    'sid' => $data_row['sid'],
+                    'jobtype' => $data_row['jobtype'],
+                    'date_start' => $data_row['date_start'],
+                    'start_by' => $data_row['start_by'],
+                    'start_by_name' => $start_by,
+                    'machine_id' => $data_row['machine_id'],
+                    'machine_name' => $mcname,
+                    'date_end' => $data_row['date_end'],
+                    'end_by' => $data_row['end_by'],
+                    'end_by_name' => $end_by,
+                    'quantity' => $data_row['quantity'],
+                    'totalquantity' => $data_row['totalquantity'],
+                    'remainingquantity' => $data_row['remainingquantity']
+                );
+                $outputDetail[$data_key] = $new_data_row;
             }
         }
         #print_r($outputDetail);
