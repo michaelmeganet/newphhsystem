@@ -185,35 +185,39 @@ function get_filteredDetails($table, $date, $summType, $staffid, $mcid, $shift) 
     }
     if ($summType == 'daily') {
         $qr = "SELECT * FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                . "WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
                 . "AND mcid = $mcid AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') "
                 . $timecheck
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'"
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
                 . "ORDER BY dateofcompletion, staffid, mcid ASC";
     } elseif ($summType == 'all') {
         $qr = "SELECT * FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                . "WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' AND staffid = '$staffid' "
                 . "AND mcid = $mcid AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') "
                 . $timecheck
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'"
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
                 . "ORDER BY dateofcompletion, staffid, mcid ASC";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     #echo "\n qr = $qr\n";
     if (!empty($result)) {
-        return $result;
+        $output =  $result;
     } else {
-        return 'empty';
+        $output =  'empty';
     }
+    #echo "\n output = $output\n";
+    return $output;
 }
 
 function get_machineDetails($mcid) {
@@ -242,7 +246,7 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
         $timecheck = '';
     }
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ'"
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB')"
                 #. " AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' "
@@ -254,7 +258,7 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
                 . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
                 . " ORDER BY mcid ASC";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' "
@@ -270,27 +274,31 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     if (!empty($result)) {
-        return $result;
+        $output =  $result;
     } else {
-        return 'empty';
+        $output = 'empty';
     }
+    #echo "\n output = $output\n";
+    return $output;
 }
 
 function get_distinctMachine_M($table, $date, $summType) {
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') ORDER BY mcid ASC"
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'";
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+        $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') ORDER BY mcid ASC"
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'";
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -303,19 +311,21 @@ function get_distinctMachine_M($table, $date, $summType) {
 
 function get_distinctStaff_M($table, $date, $summType, $mcid) {
     if ($summType == 'daily') {
-        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' "
+        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'";
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
     } elseif ($summType == 'all') {
-        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND jlfor = 'CJ' "
+        $qr = "SELECT DISTINCT staffid FROM $table WHERE poid IS NOT NULL AND mcid = $mcid AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'";
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
     }
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -343,26 +353,29 @@ function get_distinctStaff($table, $date, $summType, $shift) {
 
     if ($summType == 'daily') {
         $qr = "SELECT DISTINCT staffid FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                . "WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' "
                 . "AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')"
                 . "$timecheck"
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'";
+                . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
     } elseif ($summType == 'all') {
         $qr = "SELECT DISTINCT staffid FROM $table "
-                . "WHERE poid IS NOT NULL AND jlfor = 'CJ' "
+                . "WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
                 . "AND NOT jobtype = 'roughgrinding' "
                 . "AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m')"
                 . "$timecheck"
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
-                . "AND machineid NOT LIKE 'RGG%'";
+                . "AND machineid NOT LIKE 'RGG%'AND machineid NOT LIKE 'CNC%'"
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
         ;
     }
+    #echo "\n qr = $qr\n";
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     if (!empty($result)) {
@@ -1059,7 +1072,7 @@ switch ($action) {
                         }
                         $machineList = get_distinctMachine($kpidetailstable, $date, 'daily', $staffid, $shift);
                         #print_r($machineList);
-                        #echo "<span style= 'color:white;background-color:black'>found " . count($machineList) . " machines</span><br>";
+                        #echo "\n<span style= 'color:white;background-color:black'>found " . count($machineList) . " machines</span><br>\n";
                         foreach ($machineList as $data_machine) {
                             $mcid = $data_machine['mcid'];
                             $machineid = $data_machine['machineid'];
