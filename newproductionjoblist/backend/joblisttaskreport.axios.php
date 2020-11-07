@@ -242,9 +242,9 @@ switch ($action) {
                         //if ($process == 'Job Take') {
                         //    $infoJT = $status;
                         //} else {
-                            if ($status == 'Finished') {
-                                $finCount++;
-                            }
+                        if ($status == 'Finished') {
+                            $finCount++;
+                        }
                         //}
                     }
                     #echo "sid=$sid;\nfinCount = $finCount ; jobworklen = $jobworklen\n";
@@ -348,7 +348,6 @@ switch ($action) {
                     $issueperiod = substr($issuedate, 2, 2) . substr($issuedate, 5, 2);
                     #$completiondate = $dtl_scheduling['completion_date'];
                     #$completionperiod = substr($completiondate, 2, 2) . substr($completiondate, 5, 2);
-
                     #$jobcode = $jlfor . ' ' . $co_code . ' ' . $issueperiod . ' ' . $runningno . ' ' . $jobno . ' ' . $completionperiod;
                     $jobcode = $jlfor . ' ' . $co_code . ' ' . $issueperiod . ' ' . $runningno . ' ' . $jobno;
                     $objJWL = new JOB_WORK_DETAIL($jobcode, $cuttingtype, $processcode, $totalqty, $outputList);
@@ -393,10 +392,15 @@ switch ($action) {
         $jobno = (int) substr($jobcode, 17, 2);
         #echo "branch = $branchcode;\n co_code = $co_code;\n yearmonth = $yearmonth;\n runningno = $runningno;\n jobno = $jobno;";
         $sch_detail = get_scheduling_detail_by_jobcode($period, $branchcode, $co_code, $yearmonth, $runningno, $jobno);
-        $pmid = $sch_detail['process'];
-        $processcode = get_processcode($pmid);
-        $sch_detail['processcode'] = $processcode;
-        echo json_encode($sch_detail);
+        if ($sch_detail == 'empty') {
+            echo json_encode(array('status' => 'error', 'msg' => "Cannot find data of jobcode = $jobcode in period = $period"));
+            break;
+        } else {
+            $pmid = $sch_detail['process'];
+            $processcode = get_processcode($pmid);
+            $sch_detail['processcode'] = $processcode;
+            echo json_encode(array('status' => 'ok', 'data' => $sch_detail));
+        }
         break;
     case 'getOutputDetail':
         $period = $received_data->period;
@@ -415,7 +419,7 @@ switch ($action) {
                 //convert mcid into machine name
                 $mcname = get_array_machine($data_row['machine_id']);
                 #$data_row['machine_name'] = $mcname;
-                $new_data_row = array (
+                $new_data_row = array(
                     'poid' => $data_row['poid'],
                     'sid' => $data_row['sid'],
                     'jobtype' => $data_row['jobtype'],
@@ -441,7 +445,6 @@ switch ($action) {
         $period = $received_data->period;
         $jobcode = $received_data->jobcode;
         #$staffid = $received_data->staffid;
-
         //begin parsing the jobcode;
         //jobcode format is AA BBB CCDD EEEE FF; Length is 19, Min 0, Max 18
         //AA = branch
@@ -474,17 +477,17 @@ switch ($action) {
         $qr = "SELECT * FROM joblist_work_status WHERE jobcode = '$jobcode'";
         $objSQL1 = new SQL($qr);
         $result = $objSQL1->getResultOneRowArray();
-        if (!empty($result)){
+        if (!empty($result)) {
             $qr2 = "UPDATE `joblist_work_status` SET `bandsaw` = 'true' WHERE jobcode LIKE '$jobcode'";
             echo "$qr2<br>";
             $objSQL2 = new SQL($qr2);
             $result2 = $objSQL2->getUpdate();
-            if ($result2 == 'updated'){
+            if ($result2 == 'updated') {
                 echo json_encode(true);
-            }else{
+            } else {
                 echo json_encode(false);
             }
-        }else{
+        } else {
             echo json_encode(false);
         }
         break;
