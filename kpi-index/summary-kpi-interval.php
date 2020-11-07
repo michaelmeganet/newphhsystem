@@ -103,8 +103,8 @@ and open the template in the editor.
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th style='width:25%'>({{datarow.staffid}}) - {{datarow.staffname}}</th>
-                                                <th>({{datarow.machinename}}) - {{datarow.machinemodel}}</th>
+                                                <th style='width:25%'>({{datarow.staffid.toUpperCase()}}) - {{datarow.staffname.toUpperCase()}}</th>
+                                                <th>({{datarow.machinename}}) - {{datarow.machinemodel.toUpperCase()}}</th>
                                                 <th>&nbsp;</th> 
                                                 <th style='width:25%'>Machine Capacity Per Shift : {{datarow.machine_capacity_per_shift}}</th>
                                             </tr>

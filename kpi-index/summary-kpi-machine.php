@@ -47,7 +47,7 @@ and open the template in the editor.
                             <table class='table table-bordered align-middle'>
                                 <thead>
                                     <tr>
-                                        <th style='width:20%'>{{data.machineid}}</th>
+                                        <th style='width:20%'>{{data.machineid.toUpperCase()}}</th>
                                         <th>Machine Index per Shift : {{data.index_per_shift}}</th>
                                     </tr>
                                     <tr>
@@ -61,7 +61,7 @@ and open the template in the editor.
                                     <tbody>
                                     <template v-for='datarow in data.bystaff'>
                                         <tr>
-                                            <td colspan="">STAFF ID = {{datarow.staffid}}</td>
+                                            <td colspan="">STAFF ID = {{datarow.staffid.toUpperCase()}}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="">STAFF NAME = {{datarow.staffname}}</td>
