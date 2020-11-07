@@ -77,6 +77,7 @@ function get_scheduling_detail($sid, $period) {
 function get_array_output($sid, $period) {
     $proouttab = "production_output_" . $period;
     $qr = "SELECT * FROM $proouttab WHERE sid = $sid ORDER BY poid DESC";
+    #echo "qr = $qr\n";
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     if (!empty($result)) {
@@ -419,6 +420,7 @@ switch ($action) {
                 //convert mcid into machine name
                 $mcname = get_array_machine($data_row['machine_id']);
                 #$data_row['machine_name'] = $mcname;
+                #print_r($data_row);
                 $new_data_row = array(
                     'poid' => $data_row['poid'],
                     'sid' => $data_row['sid'],
