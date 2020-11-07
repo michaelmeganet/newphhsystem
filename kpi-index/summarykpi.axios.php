@@ -212,9 +212,9 @@ function get_filteredDetails($table, $date, $summType, $staffid, $mcid, $shift) 
     $result = $objSQL->getResultRowArray();
     #echo "\n qr = $qr\n";
     if (!empty($result)) {
-        $output =  $result;
+        $output = $result;
     } else {
-        $output =  'empty';
+        $output = 'empty';
     }
     #echo "\n output = $output\n";
     return $output;
@@ -274,7 +274,7 @@ function get_distinctMachine($table, $date, $summType, $staffid, $shift) {
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     if (!empty($result)) {
-        $output =  $result;
+        $output = $result;
     } else {
         $output = 'empty';
     }
@@ -287,19 +287,22 @@ function get_distinctMachine_M($table, $date, $summType) {
         $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
-                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') ORDER BY mcid ASC"
+                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d') "
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
                 . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
-                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
+                . "ORDER BY mcid ASC";
     } elseif ($summType == 'all') {
         $qr = "SELECT DISTINCT mcid,machineid FROM $table WHERE poid IS NOT NULL AND (jlfor = 'CJ' || jlfor = 'SB') "
                 #. "AND NOT jobtype ='cncmachining' "
                 #. "AND NOT jobtype = 'precisiongrinding' "
-                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') ORDER BY mcid ASC"
+                . "AND NOT jobtype = 'roughgrinding' AND DATE_FORMAT(start_time,'%Y %m') = DATE_FORMAT('$date','%Y %m') "
                 #. "AND machineid NOT LIKE 'CNC%' AND machineid NOT LIKE 'SGG%' "
                 . "AND machineid NOT LIKE 'RGG%' AND machineid NOT LIKE 'CNC%'"
-                . "OR machineid = 'CNC02' OR machineid = 'CNC01'";
+                . "OR machineid = 'CNC02' OR machineid = 'CNC01'"
+                . "ORDER BY mcid ASC";
     }
+    #echo "qr = $qr\n";
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     if (!empty($result)) {
@@ -478,7 +481,7 @@ switch ($action) {
             $machineno = $result['machine_no'];
             if ($result['index_per_hour'] != NULL || $result['index_per_hour'] != 0) {
                 $machine_capacity_per_shift = $result['index_per_hour'] * 8;
-            }else{
+            } else {
                 $machine_capacity_per_shift = 0;
             }
             $resArr = array(
@@ -1219,9 +1222,6 @@ switch ($action) {
                     $machine_capacity_per_hour = null;
                     $machine_capacity_per_shift = null;
                 }
-                $sum_deltaOutWMachine = array();
-                $output_weight_sum = 0;
-                $cnt = 0;
                 $staffList = get_distinctStaff_M($kpidetailstable, $date, $summType, $mcid);
                 #echo "<span style= 'color:white;background-color:black'>found " . count($machineList) . " machines</span><br>";
                 foreach ($staffList as $data_staff) {
@@ -1235,11 +1235,15 @@ switch ($action) {
                     $filteredDetails = get_filteredDetails($kpidetailstable, $date, $summType, $staffid, $mcid, 'all');
                     if ($filteredDetails != 'empty') {
                         //begin calculate kpi (based on staffid and mcid
+                        $sum_deltaOutWMachine = array();
+                        $output_weight_sum = 0;
+                        $cnt = 0;
                         foreach ($filteredDetails as $data_row) {
                             $cnt++;
                             $jd_qty = $data_row['totalquantity'];
                             $unit_weight = $data_row['unit_weight'];
                             $start_time = $data_row['start_time'];
+                            $start_date = date_format(date_create($start_time), 'Y-m-d');
                             $end_time = $data_row['end_time'];
                             if ($jd_qty) {
                                 $output_weight = $jd_qty * $unit_weight;
@@ -1249,10 +1253,10 @@ switch ($action) {
                             //fetch current KPI
                             $shiftVal = get_kpiTimeTableDetails($start_time);
                             $output_weight_sum += $output_weight;
-                            if (isset($sum_deltaOutWMachine[$shiftVal])) {
-                                $sum_deltaOutWMachine[$shiftVal] = $sum_deltaOutWMachine[$shiftVal] + $output_weight;
+                            if (isset($sum_deltaOutWMachine[$start_date][$shiftVal])) {
+                                $sum_deltaOutWMachine[$start_date][$shiftVal] += $output_weight;
                             } else {
-                                $sum_deltaOutWMachine[$shiftVal] = $output_weight;
+                                $sum_deltaOutWMachine[$start_date][$shiftVal] = $output_weight;
                             }
                             //slide in the individual value into data_row;
                             $offset = 12;
@@ -1262,13 +1266,40 @@ switch ($action) {
                                     array_slice($data_row, $offset, NULL, true);
                             $new_details[] = $new_datarow;
                         }
+                        $sum_total_kpi = 0;
+                        foreach ($sum_deltaOutWMachine as $date_detail) {
+                            foreach ($date_detail as $key => $val) {
+                                if ($machine_capacity_per_shift) {
+                                    if ($key == 1) {
+                                        $total_kpi = ($val - $machine_capacity_per_shift) / $machine_capacity_per_shift * 9.8;
+                                    } elseif ($key == 0) {
+                                        $total_kpi = ($val) / $machine_capacity_per_shift * 7.35;
+                                    } else {
+                                        $total_kpi = 0;
+                                    }
+                                    #$total_kpi = round(($sum_deltaOutWMachine / $machine_capacity_per_shift), 2);
+                                    #echo 'rmrate ='.$RMRate;
+                                } else {
+                                    $total_kpi = 0;
+                                }
+                                $sum_total_kpi += $total_kpi;
+                            }
+                        }
+                        if ($sum_total_kpi < 0){
+                            $real_total_kpi = 0;
+                        }else{
+                            $real_total_kpi = $sum_total_kpi;
+                        }
                         //create array of the current sum
                         #echo "Generating staffid = $staffid, machine id = $machineid<br>Found $cnt Data<br> <strong>Total KPI is $calculatedKPI.</strong><br>";
                         if (isset($new_details)) {
                             $det_kpi_row2[] = array(
                                 'staffid' => $staffid,
                                 'staffname' => $staffname,
-                                'details' => $new_details
+                                'details' => $new_details,
+                                'calc_val_kpi' => round($sum_total_kpi,2),
+                                'real_val_kpi' => round($real_total_kpi,2),
+                                'sum_total_weight' => round($output_weight_sum,2)
                             );
                         }
                         unset($new_details);
@@ -1276,43 +1307,12 @@ switch ($action) {
                         
                     }
                 }
-                if ($machine_capacity_per_shift) {
-                    if (isset($sum_deltaOutWMachine[1])) {
-                        $total_kpi_normal = ($sum_deltaOutWMachine[1] - $machine_capacity_per_shift) / $machine_capacity_per_shift * 9.8;
-                    } else {
-                        $total_kpi_normal = 0;
-                    }
-                    if (isset($sum_deltaOutWMachine[0])) {
-                        $total_kpi_overtime = ($sum_deltaOutWMachine[0]) / $machine_capacity_per_shift * 7.35;
-                    } else {
-                        $total_kpi_overtime = 0;
-                    }
-
-                    if ($total_kpi_normal < 0) {
-                        $total_kpi = round($total_kpi_overtime, 2);
-                    } elseif ($total_kpi_overtime < 0) {
-                        $total_kpi = round($total_kpi_normal, 2);
-                    } elseif ($total_kpi_normal < 0 && $total_kpi_overtime < 0) {
-                        $total_kpi = round(0, 2);
-                    } else {
-                        $total_kpi = round((float) $total_kpi_normal + (float) $total_kpi_overtime, 2);
-                    }
-                    #$total_kpi = round(($sum_deltaOutWMachine / $machine_capacity_per_shift), 2);
-                    #echo 'rmrate ='.$RMRate;
-                } else {
-                    $total_kpi_overtime = 0;
-                    $total_kpi_normal = 0;
-                    $total_kpi = 0;
-                }
                 if (isset($det_kpi_row2)) {
                     $det_kpi_row[] = array(
                         'machineid' => $machineid,
                         'machinename' => $machine_name,
                         'machinemodel' => $machine_model,
                         'index_per_shift' => $machine_capacity_per_shift,
-                        'kpi_normal' => $total_kpi_normal,
-                        'kpi_overtime' => $total_kpi_overtime,
-                        'totalkpi' => $total_kpi,
                         'bystaff' => $det_kpi_row2,
                     );
                     unset($det_kpi_row2);
@@ -1322,7 +1322,7 @@ switch ($action) {
             $code = $ex->getCode();
             switch ($code) {
                 case 101: //cannot find staff list
-                    #echo "Cannot find Machine for period = $period.<br>";
+                    echo "Cannot find Machine for period = $period.<br>";
                     break;
             }
         }
