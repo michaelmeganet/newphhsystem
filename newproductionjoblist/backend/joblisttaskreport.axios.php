@@ -14,10 +14,10 @@ function get_joblisttasks($userid, $period, $start, $limit) {
     if ($userid == null) {
         $where = '';
     } else {
-        $where = "WHERE start_by like '%$userid%'";
+        $where = "WHERE start_by like '%$userid%' ";
     }
     $proouttab = "production_output_" . $period;
-    $qr = "SELECT DISTINCT sid FROM $proouttab $where LIMIT $start,$limit";
+    $qr = "SELECT DISTINCT sid FROM $proouttab $where ORDER BY sid DESC LIMIT $start,$limit";
     #echo $qr;
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -302,7 +302,7 @@ switch ($action) {
         $userid = $received_data->userid;
         $period = $received_data->period;
         #$page_arr = array();
-        $limit = 30;
+        $limit = 15;
         $totaldata = get_count_joblisttasks($userid, $period);
         $totalpage = ceil($totaldata / $limit);
         $page_arr = array('totaldata' => $totaldata, 'totalpage' => $totalpage);
@@ -313,7 +313,7 @@ switch ($action) {
         $userid = $received_data->userid;
         $period = $received_data->period;
         $page = $received_data->page;
-        $limit = 30; //show max 30 records per page
+        $limit = 15; //show max 30 records per page
         $start = ($page - 1) * $limit;
         try {
             $list_joblisttask = get_joblisttasks($userid, $period, $start, $limit);
