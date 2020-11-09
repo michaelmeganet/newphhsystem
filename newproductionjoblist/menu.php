@@ -34,13 +34,13 @@ include_once ("includes/variables.inc.php");
         <td id="tdtitle">SCAN BARCODE</td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index-pj-sb.php" class="noline">Go To Scan Barcode Area</a></td>
+        <td id="tdsubtitle"><a href="index-pj-sb.php" class="noline">Go To Legacy Scan Barcode</a></td>
     </tr>
     <tr>
         <td id="tdsubtitle"><hr></td>
     </tr>
     <tr>
-        <td id="tdsubtitle"><a href="index.php?view=njs" class="noline">Go To New UI Scan Barcode</a></td>
+        <td id="tdsubtitle"><a href="index.php?view=njs" class="noline">Go To New Scan Barcode</a></td>
     </tr>
     <?php
     //end of Production Joblist
