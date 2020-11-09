@@ -121,11 +121,21 @@ var procVue = new Vue({
     },
     beforeMount: function () {
         //Put codes needed before vue.js mount  
-        this.staffid = document.getElementById('staffid').value;
         this.machineid = document.getElementById('machineid').value;
-        this.jobno = document.getElementById('jobno').value;
-        this.inputmode = document.getElementById('input_mode').value;
         this.proc = document.getElementById('proc').value;
+        searchParam = new URLSearchParams(location.search);
+        if (searchParam.has("jlstaffid")){
+            this.staffid = searchParam.get("jlstaffid");
+        }
+        if (searchParam.has("jljobcode")){
+            //console.log(searchParam.get("jljobcode"));
+            this.jobcode = searchParam.get("jljobcode");
+        }
+        if (searchParam.has("page")){
+            this.inputmode = searchParam.get("page");
+        }else{
+            this.inputmode = 'normal';
+        }
     },
     mounted: function () {
         //put codes needed after vue.js is mounted
