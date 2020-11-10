@@ -9,7 +9,7 @@ and open the template in the editor.
     <head>
         <meta charset="UTF-8">
         <title></title>
-        <link href="./assets/html-excel/dist/css/tableexport.min.css" rel="stylesheet">      
+        <link href="../assets/html-excel/dist/css/tableexport.min.css" rel="stylesheet">      
         <script src='https://cdn.jsdelivr.net/npm/vue/dist/vue.js'></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
