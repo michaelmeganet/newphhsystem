@@ -1,6 +1,6 @@
 <?php
-include_once 'class/dbh.inc.php';
-include_once 'class/variables.inc.php';
+include_once '../class/dbh.inc.php';
+include_once '../class/variables.inc.php';
 
 $data_array = array(
     array('code' => 'ETD', 'runningno' => '683', 'jobno' => '06'),
