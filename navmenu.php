@@ -30,47 +30,48 @@
           </li>
         </ul>
         <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="download">Job Orders <span class="caret"></span></a>
-                    <ul class="dropdown-menu" aria-labelledby="Job">
-                        <li><a class="dropdown-item" href="#"><strike>Issue Orderlist</strike></a></li>
-                        <li><a class="dropdown-item" href="#"><strike>Revise Orderlsit</strike></a></li>
-                        <li><a class="dropdown-item" href="#"><strike>Orderlist CRUD page</strike></a></li>
-                        <li><div class="dropdown-divider"></div></li>
-                        <li><a class="dropdown-item" href="#"><strike>Issue Joblist</strike></a></li>
-                        <li><a class="dropdown-item" href="#"><strike>Re-issue Joblist</strike></a></li>
-                        <li><a class="dropdown-item" href="#"><strike>View Joblist</strike></a></li>
-                        <li><a class="dropdown-item" href="#"><strike>Search Joblist by Job no</strike></a></li>
-                        <li><a class="dropdown-item" href="#"><strike>Search Joblist by running no</strike></a></li>
-                        <li><div class="dropdown-divider"></div></li>
-                        <li><a class="dropdown-item" href="index-joborder.php?view=bjc">Batch Check Joblist</a></li>
-                        <!-- <a class="dropdown-item" href="#">Production Schedule</a>
-                        <a class="dropdown-item" href="#">Enquiry system</a> -->
-                    </ul>
-                </li>            
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="download">Production Control<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="download">
-                        <div class="dropdown-menu" aria-labelledby="download">
 
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" >Enter/Update Schedule</a>
-                        <a class="dropdown-item" href="#" >View Schedule</a>
-                        <a class="dropdown-item" href="#" >View Schedule Summary</a>                        
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" >View Outstanding Report </a>
-                        <a class="dropdown-item" href="#" >View Pre-Machining summary Report </a>
-                        <a class="dropdown-item" href="#" >View Daily Output </a>
-                        <a class="dropdown-item" href="#" >Enter Tool Steel Joblist </a>
-                        <a class="dropdown-item" href="#" >View Tool Steel Joblist</a>
-                        <a class="dropdown-item" href="#" >Daily Production Target</a>
-                        <a class="dropdown-item" href="#" >Daily Tool Steel Report</a>    
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="download">Job Orders <span class="caret"></span></a>
+              <div class="dropdown-menu" aria-labelledby="Job">
+                <a class="dropdown-item" href="#">Issue Orderlsit</a>
+                <a class="dropdown-item" href="#">Revise Orderlsit</a>
+                <a class="dropdown-item" href="#">Orderlsit CRUD page</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Issue Joblist</a>
+                <a class="dropdown-item" href="#">Re-issue Joblist</a>
+                <a class="dropdown-item" href="#">View Joblist</a>
+                <a class="dropdown-item" href="#">Search Joblist by Job no</a>
+                <a class="dropdown-item" href="#">Search Joblist by running no</a>
+                <div class="dropdown-divider"></div>
+                <!-- <a class="dropdown-item" href="#">Production Schedule</a>
+                <a class="dropdown-item" href="#">Enquiry system</a> -->
+                
+              </div>
+            </li>            
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="download">Production Control<span class="caret"></span></a>
+              <div class="dropdown-menu" aria-labelledby="download">
+                  <div class="dropdown-menu" aria-labelledby="download">
+                      
+                  </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" >Enter/Update Schedule</a>
+                      <a class="dropdown-item" href="#" >View Schedule</a>
+                      <a class="dropdown-item" href="#" >View Schedule Summary</a>                        
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#" >View Outstanding Report </a>
+                      <a class="dropdown-item" href="#" >View Pre-Machining summary Report </a>
+                      <a class="dropdown-item" href="#" >View Daily Output </a>
+                      <a class="dropdown-item" href="#" >Enter Tool Steel Joblist </a>
+                      <a class="dropdown-item" href="#" >View Tool Steel Joblist</a>
+                      <a class="dropdown-item" href="#" >Daily Production Target</a>
+                      <a class="dropdown-item" href="#" >Daily Tool Steel Report</a>    
+                
+              </div>
+            </li>            
+        </ul>
 
-                    </div>
-                </li>            
-            </ul>
-
-        </div>
+      </div>
     </div>
   </div>
