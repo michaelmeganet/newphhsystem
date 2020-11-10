@@ -14,10 +14,10 @@ function get_joblisttasks($userid, $period, $start, $limit) {
     if ($userid == null) {
         $where = '';
     } else {
-        $where = "WHERE start_by like '%$userid%'";
+        $where = "WHERE start_by like '%$userid%' ";
     }
     $proouttab = "production_output_" . $period;
-    $qr = "SELECT DISTINCT sid FROM $proouttab $where LIMIT $start,$limit";
+    $qr = "SELECT DISTINCT sid FROM $proouttab $where ORDER BY sid DESC LIMIT $start,$limit";
     #echo $qr;
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
@@ -77,6 +77,7 @@ function get_scheduling_detail($sid, $period) {
 function get_array_output($sid, $period) {
     $proouttab = "production_output_" . $period;
     $qr = "SELECT * FROM $proouttab WHERE sid = $sid ORDER BY poid DESC";
+    #echo "qr = $qr\n";
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultRowArray();
     if (!empty($result)) {
@@ -125,7 +126,7 @@ function get_scheduling_detail_by_jobcode($period, $branch, $co_code, $yearmonth
 }
 
 function get_array_machine($mcid) {
-    $qr = "SELECT name FROM machine2020 WHERE mcid = $mcid";
+    $qr = "SELECT name FROM machine WHERE mcid = $mcid";
     $objSQL = new SQL($qr);
     $result = $objSQL->getResultOneRowArray();
     if (!empty($result)) {
@@ -242,9 +243,9 @@ switch ($action) {
                         //if ($process == 'Job Take') {
                         //    $infoJT = $status;
                         //} else {
-                            if ($status == 'Finished') {
-                                $finCount++;
-                            }
+                        if ($status == 'Finished') {
+                            $finCount++;
+                        }
                         //}
                     }
                     #echo "sid=$sid;\nfinCount = $finCount ; jobworklen = $jobworklen\n";
@@ -302,7 +303,7 @@ switch ($action) {
         $userid = $received_data->userid;
         $period = $received_data->period;
         #$page_arr = array();
-        $limit = 30;
+        $limit = 15;
         $totaldata = get_count_joblisttasks($userid, $period);
         $totalpage = ceil($totaldata / $limit);
         $page_arr = array('totaldata' => $totaldata, 'totalpage' => $totalpage);
@@ -313,7 +314,7 @@ switch ($action) {
         $userid = $received_data->userid;
         $period = $received_data->period;
         $page = $received_data->page;
-        $limit = 30; //show max 30 records per page
+        $limit = 15; //show max 30 records per page
         $start = ($page - 1) * $limit;
         try {
             $list_joblisttask = get_joblisttasks($userid, $period, $start, $limit);
@@ -348,7 +349,6 @@ switch ($action) {
                     $issueperiod = substr($issuedate, 2, 2) . substr($issuedate, 5, 2);
                     #$completiondate = $dtl_scheduling['completion_date'];
                     #$completionperiod = substr($completiondate, 2, 2) . substr($completiondate, 5, 2);
-
                     #$jobcode = $jlfor . ' ' . $co_code . ' ' . $issueperiod . ' ' . $runningno . ' ' . $jobno . ' ' . $completionperiod;
                     $jobcode = $jlfor . ' ' . $co_code . ' ' . $issueperiod . ' ' . $runningno . ' ' . $jobno;
                     $objJWL = new JOB_WORK_DETAIL($jobcode, $cuttingtype, $processcode, $totalqty, $outputList);
@@ -393,10 +393,15 @@ switch ($action) {
         $jobno = (int) substr($jobcode, 17, 2);
         #echo "branch = $branchcode;\n co_code = $co_code;\n yearmonth = $yearmonth;\n runningno = $runningno;\n jobno = $jobno;";
         $sch_detail = get_scheduling_detail_by_jobcode($period, $branchcode, $co_code, $yearmonth, $runningno, $jobno);
-        $pmid = $sch_detail['process'];
-        $processcode = get_processcode($pmid);
-        $sch_detail['processcode'] = $processcode;
-        echo json_encode($sch_detail);
+        if ($sch_detail == 'empty') {
+            echo json_encode(array('status' => 'error', 'msg' => "Cannot find data of jobcode = $jobcode in period = $period"));
+            break;
+        } else {
+            $pmid = $sch_detail['process'];
+            $processcode = get_processcode($pmid);
+            $sch_detail['processcode'] = $processcode;
+            echo json_encode(array('status' => 'ok', 'data' => $sch_detail));
+        }
         break;
     case 'getOutputDetail':
         $period = $received_data->period;
@@ -408,14 +413,31 @@ switch ($action) {
             foreach ($outputDetail as $data_key => $data_row) {
                 //convert start_by into name
                 $start_by = get_staff_name($data_row['start_by']);
-                $data_row['start_by'] = $start_by;
+                #$data_row['start_by_name'] = $start_by;
                 //convert end_by into name
                 $end_by = get_staff_name($data_row['end_by']);
-                $data_row['end_by'] = $end_by;
+                #$data_row['end_by_name'] = $end_by;
                 //convert mcid into machine name
                 $mcname = get_array_machine($data_row['machine_id']);
-                $data_row['machine_id'] = $mcname;
-                $outputDetail[$data_key] = $data_row;
+                #$data_row['machine_name'] = $mcname;
+                #print_r($data_row);
+                $new_data_row = array(
+                    'poid' => $data_row['poid'],
+                    'sid' => $data_row['sid'],
+                    'jobtype' => $data_row['jobtype'],
+                    'date_start' => $data_row['date_start'],
+                    'start_by' => $data_row['start_by'],
+                    'start_by_name' => $start_by,
+                    'machine_id' => $data_row['machine_id'],
+                    'machine_name' => $mcname,
+                    'date_end' => $data_row['date_end'],
+                    'end_by' => $data_row['end_by'],
+                    'end_by_name' => $end_by,
+                    'quantity' => $data_row['quantity'],
+                    'totalquantity' => $data_row['totalquantity'],
+                    'remainingquantity' => $data_row['remainingquantity']
+                );
+                $outputDetail[$data_key] = $new_data_row;
             }
         }
         #print_r($outputDetail);
@@ -425,7 +447,6 @@ switch ($action) {
         $period = $received_data->period;
         $jobcode = $received_data->jobcode;
         #$staffid = $received_data->staffid;
-
         //begin parsing the jobcode;
         //jobcode format is AA BBB CCDD EEEE FF; Length is 19, Min 0, Max 18
         //AA = branch
@@ -458,17 +479,17 @@ switch ($action) {
         $qr = "SELECT * FROM joblist_work_status WHERE jobcode = '$jobcode'";
         $objSQL1 = new SQL($qr);
         $result = $objSQL1->getResultOneRowArray();
-        if (!empty($result)){
+        if (!empty($result)) {
             $qr2 = "UPDATE `joblist_work_status` SET `bandsaw` = 'true' WHERE jobcode LIKE '$jobcode'";
             echo "$qr2<br>";
             $objSQL2 = new SQL($qr2);
             $result2 = $objSQL2->getUpdate();
-            if ($result2 == 'updated'){
+            if ($result2 == 'updated') {
                 echo json_encode(true);
-            }else{
+            } else {
                 echo json_encode(false);
             }
-        }else{
+        } else {
             echo json_encode(false);
         }
         break;

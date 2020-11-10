@@ -145,7 +145,7 @@ $branch = $rowadmin['branch'];
                         </tr>
                     </table>
                 </div>
-                <div v-show="proc_status == 'end'">
+                <div v-show="proc_status == 'end' && current_staffid == staffid">
                     <font style='color:#1067c7'>Elapsed Time since Job Started : {{elapsedTime}}</font><br><br>
                     <table border="0">
                         <tr>
@@ -153,6 +153,17 @@ $branch = $rowadmin['branch'];
                             <td>: <input type="text" v-model='jobcode_end' name="jobcode_end" id="jobcode_end" style="width:200px"
                                          v-on:keyup.enter='parseJobCodeEnd()'/>
                             </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" v-html="scan_response">{{scan_response}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div v-show="proc_status == 'end' && current_staffid != staffid">
+                    <font style='color:#1067c7'>Elapsed Time since Job Started : {{elapsedTime}}</font><br><br>
+                    <table border="0">
+                        <tr>
+                            <td><font style='color:red'>Cannot End this job<br>Job started by StaffID = {{current_staffid}}.<br>Cannot Change Staff midway</font></td>
                         </tr>
                         <tr>
                             <td colspan="3" v-html="scan_response">{{scan_response}}</td>
@@ -251,6 +262,19 @@ $branch = $rowadmin['branch'];
                 //} else {
                 //    return parseFloat(this.totalquantity) - parseFloat(this.quantity);
                 //}
+            },
+            current_staffid: function () {
+                len = this.outputDetail.length;
+                console.log('on current_staffid');
+                for (i = 0; i < len; i++) {
+                    data = this.outputDetail[i];
+                    if (data.jobtype === this.proc && data['date_end'] === null) {
+                        console.log('previously scanned by ' + data.start_by);
+                        return data.start_by;
+                    }
+                }
+                console.log('cannot found old staffdata, using current input');
+                return this.staffid;
             }
         },
         watch: {
@@ -258,6 +282,9 @@ $branch = $rowadmin['branch'];
                 if (this.staffid.length === 6 && this.input_mode !== 'scan') {
                     this.clearData();
                     this.getStaffName();
+                } else if (this.staffid.length < 6 && this.staffid.length > 0 && this.input_mode !== 'scan') {
+                    this.staff_response_stats = '';
+                    this.staff_response = '';
                 }
             },
             machineid: function () {
@@ -265,15 +292,22 @@ $branch = $rowadmin['branch'];
                     this.getMachineName();
                 }
                 if (this.machineid.length > 0 && this.machineid.length < 5) {
-                    this.machine_response = ''
+                    this.machine_response = '';
                 }
             },
             staff_response: function () {
-                if (this.staff_response_stats === 'error') {
+                if (this.staff_response_stats === 'error' && this.staff_response_stats !== '' && this.staff_response_stats !== 'ok') {
                     this.staffid = '';
                     document.getElementById('staffid').focus();
-                } else {
+                } else if (this.staff_response_stats == 'ok') {
                     document.getElementById('jobcode').focus();
+                }
+            },
+            jobcode: function () {
+                if (this.staff_response == '' || this.staff_response_stats === 'error') {
+                    this.jobcode = '';
+                    this.createFocus('staffid');
+                    this.staff_response = '<font style="color:red">Please Enter / Scan Staff ID</font>';
                 }
             },
             jobcode_response: function () {
@@ -424,6 +458,7 @@ $branch = $rowadmin['branch'];
             },
             selectProcess: function () {
                 len = this.jobworkDetail.length;
+
                 for (i = 0; i < len; i++) {
                     process = this.jobworkDetail[i].process.toLowerCase();
                     status = this.jobworkDetail[i].status.toLowerCase();

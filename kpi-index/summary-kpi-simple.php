@@ -51,13 +51,13 @@ and open the template in the editor.
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>{{data.staffid}}</th>
-                                        <th>{{data.staffname}}</th>
+                                        <th>{{data.staffid.toUpperCase()}}</th>
+                                        <th>{{data.staffname.toUpperCase()}}</th>
                                         <th></th>
                                     </tr>
                                     <tr>
                                         <th colspan="3">
-                                            The finished job done KPI by {{data.staffname}} in the month of {{year}}-{{month}},<br>
+                                            The finished job done KPI by {{data.staffname.toUpperCase()}} in the month of {{year}}-{{month}},<br>
                                             Summarized by Machine Models below :<br>
                                         </th>
                                     </tr>
