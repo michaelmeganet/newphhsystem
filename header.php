@@ -4,15 +4,14 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="Firefox" />
-    <link rel="stylesheet" href="./docs/4/darkly/bootstrap.css" media="screen">
-    <link rel="stylesheet" href="./docs/_assets/css/custom.min.css">
+    <link rel="stylesheet" href="../docs/4/darkly/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="../docs/_assets/css/custom.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="phhlogo.ico">
-    <script src="./assets/jquery-2.2.4.min.js"></script>
-<!--    <script src="./assets/jquery-2.1.1.min.js"></script> -->
+    <script src="./assets/jquery-2.1.1.min.js"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
-    <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <script src="../node_modules/axios/dist/axios.min.js"></script>
 
-    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue/dist/vue.js"></script>
 
     <!--
     <script src="../bower_components/vue/dist/vue.js"></script>
@@ -31,7 +30,7 @@
         _gaq.push(['_setAllowLinker', true]);
         _gaq.push(['_trackPageview']);
 
-        (function () {
+        (function() {
             var ga = document.createElement('script');
             ga.type = 'text/javascript';
             ga.async = true;
@@ -41,24 +40,4 @@
         })();
 
     </script>
-    <style type="text/css">
-        .dropdown-submenu {
-            position: relative;
-        }
-
-        .dropdown-submenu a::after {
-            transform: rotate(-90deg);
-            position: absolute;
-            right: 6px;
-            top: .8em;
-        }
-
-        .dropdown-submenu .dropdown-menu {
-            top: 0;
-            left: 100%;
-            margin-left: .1rem;
-            margin-right: .1rem;
-        }
-
-    </style>
 </head>
