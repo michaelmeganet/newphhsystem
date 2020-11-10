@@ -1,6 +1,5 @@
 <?php
-#include_once("include/mysql_connect.php");
-include_once("includes/dbh.inc.php");
+include_once("include/mysql_connect.php");
 //require_once("include/session.php");
 //include_once("include/admin_check.php");
 
@@ -69,12 +68,9 @@ function updateQty() {
             $quantity[] = $qtyvalue;
         }
 
-        #$sqladm = "SELECT * FROM admin_staff WHERE staffid = '$sfid' AND (staff_level = 'admin' OR staff_level = 'supervisor')";
-        $sqladmcount = "SELECT COUNT(*) FROM admin_staff WHERE staffid = '$sfid' AND (staff_level = 'admin' OR staff_level = 'supervisor')";
-        #$resultadm = $rundb->Query($sqladm);
-        #$numrowsadm = $rundb->NumRows($resultadm);
-        $objSqladm = new SQL($sqladmcount);
-        $numrowsadm = $objSqladm->getRowCount();
+        $sqladm = "SELECT * FROM admin_staff WHERE staffid = '$sfid' AND (staff_level = 'admin' OR staff_level = 'supervisor')";
+        $resultadm = $rundb->Query($sqladm);
+        $numrowsadm = $rundb->NumRows($resultadm);
 
         if ($numrowsadm == 1) {
             $pottab = "production_output_" . $dat;
@@ -82,12 +78,9 @@ function updateQty() {
 
             //create track log report table and add data
             $sqlct = "SELECT * FROM $pottabrep";
-            #$resultct = $rundb->Query($sqlct);
-            $objSqlct = new SQL($sqlct);
-            $resultct = $objSqlct->getResultOneRowArray();
+            $resultct = $rundb->Query($sqlct);
 
-            #if (!$resultct) {
-            if (empty($resultct)) {
+            if (!$resultct) {
                 $sqlctbpottabrep = "CREATE TABLE IF NOT EXISTS `$pottabrep` (
 							`porid` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 							`poid` INT( 10 ) UNSIGNED NOT NULL ,
@@ -96,11 +89,8 @@ function updateQty() {
 							`sfid` VARCHAR( 10 ) NOT NULL ,
 							`datetime` DATETIME NOT NULL 
 							) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-                
-                $objSqlctbpottabrep = new SQL($sqlctbpottabrep);
-                $resultctbpottabrep = $objSqlctbpottabrep->getExecute();
-                if ($resultctbpottabrep == 'execute ok!'){
-#                if ($rundb->Query($sqlctbpottabrep)) {
+
+                if ($rundb->Query($sqlctbpottabrep)) {
                     
                 } else {
                     echo "<font color=\"#FF0000\">Production Output Report table cannot be created. Please contact administrator regarding this thing.</font>";
@@ -115,12 +105,8 @@ function updateQty() {
 						   WHERE poid = $poid[$x];";
 
                     $sqlpottabrep = "INSERT INTO $pottabrep (porid, poid, old_quantity, new_quantity, sfid, datetime) VALUES (NULL, $poid[$x], $oldquantity[$x], $quantity[$x], '$sfid', NOW());";
-                    $objSqlupdprotar = new SQL($sqlupdprotar);
-                    $objSqlpottabrep = new SQL($sqlpottabrep);
-                    $resultupdprotar = $objSqlupdprotar->getUpdate();
-                    $resultpottabrep = $objSqlpottabrep->InsertData();
-                    if ($resultupdprotar == 'updated' && $resultpottabrep == 'insert ok!'){       
-                    #if ($rundb->Query($sqlupdprotar) && $rundb->Query($sqlpottabrep)) {
+
+                    if ($rundb->Query($sqlupdprotar) && $rundb->Query($sqlpottabrep)) {
                         $noerror = 0;
                     } else {
                         $noerror = 1;
@@ -149,10 +135,8 @@ if ($_POST['submit']) {
 $aid = $_SESSION['phhsystemAdmin'];
 
 $sqladmin = "SELECT * FROM admin WHERE aid = 19";
-#$resultadmin = $rundb->Query($sqladmin);
-#$rowadmin = $rundb->FetchArray($resultadmin);
-$objSqladmin = new SQL($sqladmin);
-$rowadmin = $objSqladmin->getResultOneRowArray();
+$resultadmin = $rundb->Query($sqladmin);
+$rowadmin = $rundb->FetchArray($resultadmin);
 
 $branch = $rowadmin['branch'];
 ?>

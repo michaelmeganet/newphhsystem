@@ -82,7 +82,7 @@ and open the template in the editor.
                                         <td>
                                             Job Code :<br>
                                             <input type="text" v-model="jobcode" id="jobcodev" name="jobcodev" value="" v-on:keyup.enter="parseJobCode();"/>
-                                            <button type='button' @click='clearData();parseJobCode();'>Refresh</button>
+                                            <button type='button' @click='parseJobCode();'>Refresh</button>
                                         </td>
                                     </tr>
                                     <tr>
@@ -96,7 +96,7 @@ and open the template in the editor.
                                     </tr>
                                     <tr>
                                         <td valign="top">
-                                            <div v-if='schDetail != "" && status != "error"' style="color:yellow">
+                                            <div v-if='schDetail != ""' style="color:yellow">
                                                 <table style='color:yellow'>
                                                     <tr>
                                                         <td>Quantity</td>       <td>:</td> <td>{{schDetail.quantity}}</td>
@@ -121,59 +121,48 @@ and open the template in the editor.
                             </table>
                             &nbsp;<br>
                             <br>
-                            <div v-if="status == 'ok'">
-                                <div v-if="jobWorkDetail != ''">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Process</th>
-                                                <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Status</th>
-                                                <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Action</th>
-                                                <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Description</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for='row in jobWorkDetail'>
-
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>{{row.process}}</td>
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>{{row.status}}</td>
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-if     ='row.process!=="Job Take" && row.status!=="Finished"'><a style="link" href="#" @click='openUpdateProcess(row.process,row.status,jobcodeParse,staffid)'>UPDATE</a></td>
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-else-if='row.process!=="Job Take" && row.status =="Finished"'><span style='color:white' >No Action</span></td>
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-else-if='row.process =="Job Take"'></td>
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>{{getStatusDescription(row.process,row.status)}}</td>
-                                                <td v-if="checkProcess(row.process)"><button type="button" @click="addBandsaw(jobcodeParse)">Add Bandsaw</button>(Only use this if there's need to do Bandsaw Process!!)</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <br>
-                                <br>
-                                <div v-if='outDetail != ""'>
-                                    Output Process Detail :
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-for="keys in outDetailKeys">{{keys}}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="row in outDetail">
-                                                <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-for="data in row">{{data}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                            <div v-else-if='status == "error"'>
+                            <div v-if="jobWorkDetail != ''">
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>{{errmsg}}</th>
+                                            <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Process</th>
+                                            <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Status</th>
+                                            <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Action</th>
+                                            <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>Description</th>
                                         </tr>
                                     </thead>
+                                    <tbody>
+                                        <tr v-for='row in jobWorkDetail'>
+
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>{{row.process}}</td>
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>{{row.status}}</td>
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-if     ='row.process!=="Job Take" && row.status!=="Finished"'><a style="link" href="#" @click='openUpdateProcess(row.process,row.status,jobcodeParse,staffid)'>UPDATE</a></td>
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-else-if='row.process!=="Job Take" && row.status =="Finished"'><span style='color:white' >No Action</span></td>
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-else-if='row.process =="Job Take"'></td>
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px'>{{getStatusDescription(row.process,row.status)}}</td>
+                                            <td v-if="checkProcess(row.process)"><button type="button" @click="addBandsaw(jobcodeParse)">Add Bandsaw</button>(Only use this if there's need to do Bandsaw Process!!)</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
+                            <br>
+                            <br>
+                            <div v-if='outDetail != ""'>
+                                Output Process Detail :
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-for="keys in outDetailKeys">{{keys}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="row in outDetail">
+                                            <td style='border:1px;border-style:solid;padding:5px 3px 5px 3px' v-for="data in row">{{data}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                         <br>
 
@@ -193,8 +182,6 @@ and open the template in the editor.
                     jobcode: '',
                     jobcodeParse: '',
                     staffid: '',
-                    status: '',
-                    errmsg: '',
                     periodList: '',
                     schDetail: '',
                     outDetail: '',
@@ -238,16 +225,6 @@ and open the template in the editor.
 
                 },
                 methods: {
-                    clearData: function () {
-                        this.jobcodeParse = '';
-                        this.staffid = '';
-                        this.status = '';
-                        this.errmsg = '';
-                        this.schDetail = '';
-                        this.outDetail = '';
-                        this.jobWorkDetail = '';
-                        this.jobworkStatusText = ''
-                    },
                     addBandsaw: function (jobcode) {
                         axios.post(this.phpajaxresponsefile, {
                             action: 'addBandsaw',
@@ -255,8 +232,8 @@ and open the template in the editor.
                         }).then(function (response) {
                             console.log('on addBandsaw');
                             console.log(response.data);
-                        }).then(function () {
-                            vueJApp.parseJobCode();
+                        }).then(function(){
+                           vueJApp.parseJobCode(); 
                         });
                     },
                     checkProcess: function (process) {
@@ -300,19 +277,9 @@ and open the template in the editor.
                         }).then(function (response) {
                             console.log('in getSchdDetail...');
                             console.log(response.data);
-                            vueJApp.status = response.data.status;
-                            if (response.data.status === 'error') {
-                                vueJApp.errmsg = response.data.msg;
-                            } else {
-                                vueJApp.schDetail = response.data.data;
-                            }
-                            return response.data.status;
-                        }).then(function (status) {
-                            if (status === 'ok') {
-                                vueJApp.getOutputDetail();
-                            } else {
-                                console.log('status is ' + status);
-                            }
+                            vueJApp.schDetail = response.data;
+                        }).then(function () {
+                            vueJApp.getOutputDetail();
                         });
                     },
                     getOutputDetail: function () {
@@ -354,9 +321,11 @@ and open the template in the editor.
                         for (var k in jobworkDtl) {
                             dat = jobworkDtl[k];
                             datValues = dat.status;
+
                             datKeys = dat.process;
                             if (datKeys === 'Job Take') {
                                 processCount = processCount - 1;
+
                             }
                             if (datKeys !== 'Job Take' && datValues !== 'Finished') {
 
@@ -394,10 +363,10 @@ and open the template in the editor.
                         jljobcode = 'jljobcode=' + encodeURIComponent(jcid);
                         console.log('process = ' + process + '\nstatus = ' + status);
                         //begin making the url
-                        url = 'index-pj-sb.php?';
+                        url = 'index.php?';
                         switch (process) {
                             case 'bandsaw':
-                                view = 'view=bs';
+                                view = 'view=bw';
                                 break;
                             case 'cncmachining':
                                 view = 'view=cm';
@@ -406,7 +375,7 @@ and open the template in the editor.
                                 view = 'view=mc';
                                 break;
                             case 'milling':
-                                view = 'view=mt';
+                                view = 'view=mg';
                                 break;
                             case 'millingwidth':
                                 view = 'view=mw';

@@ -47,7 +47,7 @@ and open the template in the editor.
                             <table class='table table-bordered align-middle'>
                                 <thead>
                                     <tr>
-                                        <th style='width:20%'>{{data.machineid.toUpperCase()}}</th>
+                                        <th style='width:20%'>{{data.machineid}}</th>
                                         <th>Machine Index per Shift : {{data.index_per_shift}}</th>
                                     </tr>
                                     <tr>
@@ -58,47 +58,40 @@ and open the template in the editor.
                             </table>
                             <div style='height:350px;overflow-y: scroll'>
                                 <table class='table table-bordered table-responsive'>
+                                    <thead>
+                                        <tr>
+                                            <th>staff_id</th>
+                                            <th>staffname</th>
+                                            <th>&nbsp;</th>
+                                            <th>&nbsp;</th>
+                                            <th  v-for='(data,index) in data.bystaff[0].details[0]'>{{index}}</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                     <template v-for='datarow in data.bystaff'>
-                                        <tr>
-                                            <td colspan="">STAFF ID = {{datarow.staffid.toUpperCase()}}</td>
+                                        <tr v-for='datax in datarow.details'>
+                                            <td>{{datarow.staffid}}</td>
+                                            <td>{{datarow.staffname}}</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td v-for='detail in datax'>{{detail}}</td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="">STAFF NAME = {{datarow.staffname}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan=2>
-                                                <table class="table table-bordered table-responsive">
-                                                    <thead>
-                                                        <tr >
-                                                            <td v-for="(datay,index) in datarow.details[0]">{{index}}</td>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for='datax in datarow.details'>
-                                                            <td v-for='detail in datax'>{{detail}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="11" style="text-align:right"><b>Sum of Total Weight :</b></td>
-                                                            <td><b>{{toFixed(datarow.sum_total_weight,2)}}</b></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="12" style="text-align:right"><b>Real Total Value Gain by KPI</b></td>
-                                                            <td><b>{{toFixed(datarow.real_val_kpi,2)}}</b></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="12" style="text-align:right"><b>Calculated Total Value Gain by KPI</b></td>
-                                                            <td><b>{{toFixed(datarow.calc_val_kpi,2)}}</b></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </template>                                    
+                                    </template>
+                                    <tr>
+                                        <td colspan="14" style="text-align:right"><b>Sum of Unit Weight :</b></td>
+                                        <td><b>{{toFixed(sum_unit_weight(data.bystaff),2)}}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="15" style="text-align:right"><b>Sum of Total Weight :</b></td>
+                                        <td><b>{{toFixed(sum_total_weight(data.bystaff),2)}}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="16" style="text-align:right"><b>Sum of Individual KPI :</b></td>
+                                        <td><b>{{toFixed(sum_inv_kpi(data.bystaff),2)}}</b></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <!--
                             <table>
                                 <tr>
                                     <td colspan="2" style="width:auto;"><b>
@@ -137,7 +130,6 @@ and open the template in the editor.
                                     </td>
                                 </tr>
                             </table>
-                            -->
                             <br>
                             <br>
                         </div>

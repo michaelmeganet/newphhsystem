@@ -32,11 +32,11 @@ and open the template in the editor.
                                 </tr>
                                 <tr>
                                     <td>Staff :</td>
-                                    <td>[{{staffid.toUpperCase()}}] - {{staffname.toUpperCase()}}</td>
+                                    <td>[{{staffid}}] - {{staffname}}</td>
                                 </tr>
                                 <tr>
                                     <td>Machine :</td>
-                                    <td>[{{machineid.toUpperCase()}}] - {{machinename}} ({{machinemodel.toUpperCase()}})</td>
+                                    <td>[{{machineid}}] - {{machinename}} ({{machinemodel}})</td>
                                 </tr>
                                 <tr>
                                     <td>Machine Capacity Per Shift (Kg):</td>
