@@ -117,6 +117,7 @@ and open the template in the editor.
                     totaldata: 0,
                     totalpage: 0,
                     pageList: '',
+
                     periodList: '',
                     joblistTaskList: ''
                 },
@@ -136,28 +137,18 @@ and open the template in the editor.
                     page: function () {
                         this.getJoblistTasks(this.page);
                     }
-
+                    
                 },
-                computed: {
-                    pageStart: function () {
-                        if (this.page < 3) {
+                computed:{
+                    pageStart: function(){
+                        if(this.page < 3){
                             return 0
-                        } else {
+                        }else{
                             return (this.page - 3);
                         }
                     }
                 },
                 methods: {
-                    clearData: function () {
-                        this.userid = '';
-                        this.staffName = '';
-                        this.loading = false;
-                        this.page = 1;
-                        this.totaldata = 0;
-                        this.totalpage = 0;
-                        this.pageList = '';
-                        this.joblistTaskList = ''
-                    },
                     getPeriodList: function () {
                         axios.post(this.phpajaxresponsefile, {
                             action: 'getPeriodList'
@@ -214,7 +205,7 @@ and open the template in the editor.
                     },
                     openJobWorkDetail: function (jobcode, staffid, period) {
                         encJobCode = encodeURIComponent(jobcode);
-                        url = 'index-pj-pj.php?view=jss&page=scan&jobcode=' + encJobCode + '&staffid=' + staffid + '&period=' + period;
+                        url = 'index.php?view=jss&page=scan&jobcode=' + encJobCode + '&staffid=' + staffid + '&period=' + period;
                         window.open(url, '_self');
                     }
                 },
